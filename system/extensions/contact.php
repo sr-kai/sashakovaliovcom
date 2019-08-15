@@ -68,7 +68,8 @@ class YellowContact {
         $referer = trim($_REQUEST["referer"]);
         $spamFilter = $this->yellow->system->get("contactSpamFilter");
         $author = $this->yellow->system->get("author");
-        $email = $this->yellow->system->get("email");
+        // $email = $this->yellow->system->get("email");
+        $email = "mail@sashakovaliov.com";
         if ($this->yellow->page->isExisting("author") && !$this->yellow->page->safeMode) {
             $author = $this->yellow->page->get("author");
         }
