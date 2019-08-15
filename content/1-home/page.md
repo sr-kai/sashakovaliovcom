@@ -20,7 +20,7 @@ Check out some of the projects I'm working on right now and read the blog for th
 
 <div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
 <strong>📧 Subscribe to my newsletter</strong></br>
-Long-form content on meditation, marketing and quality of life.
+Long-form content on meditation, marketing and quality of life
 <form class="contact-form" action="https://justmeditate.com/sendy/subscribe" method="POST" accept-charset="utf-8">
 	<label for="name" class="contact-name">Name:</label><br/>
 	<input type="text" name="name" id="name" class="form-control"/>
