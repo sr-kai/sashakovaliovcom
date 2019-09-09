@@ -6,7 +6,7 @@ Layout: blog
 Tag: curiosity, grown-up kids
 ---
 <div class="series" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
-    In the series of posts titled <strong><a href="https://sashakovaliov.com/blog/tag=grown-up-kids/">Grown-up Kids</a></strong>, I'm exploring the qualities and specific world-view we had, when we were children. And how we can re-introduce these patterns into our lives again and rewire our brains to be more open, more present and whole.
+    In the series of posts titled <strong><a href="https://www.sashakovaliov.com/blog/tag:grown-up-kids/">Grown-up Kids</a></strong>, I'm exploring the qualities and specific world-view we had, when we were children. And how we can re-introduce these patterns into our lives again and rewire our brains to be more open, more present and whole.
 </div>
 
 [image joseph-rosales-curious-child-looking-into-telescope.jpg]
@@ -53,7 +53,7 @@ I was wondering if it was possible to become a child in spirit again and be curi
 
 It turns out it's absolutely possible!
 <div class="series" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
-    In the series of posts titled <strong><a href="https://sashakovaliov.com/blog/tag=grown-up-kids/">Grown-up Kids</a></strong>, I'm exploring the qualities and specific world-view we had, when we were children. And how we can re-introduce these patterns into our lives again and rewire our brains to be more open, more present and whole.
+    In the series of posts titled <strong><a href="https://www.sashakovaliov.com/blog/tag:grown-up-kids/">Grown-up Kids</a></strong>, I'm exploring the qualities and specific world-view we had, when we were children. And how we can re-introduce these patterns into our lives again and rewire our brains to be more open, more present and whole.
 </div>
 
 What does science have to say about it?
