@@ -3,6 +3,7 @@ Title: 😄 Who the heck is Sasha Kovaliov?
 TitleNavigation : 😄 About
 TitleHeader: About
 TitleSlug: About
+typora-copy-images-to: ..\..\media\images
 ---
 
 After 10 years doing tech marketing, getting burnt out and being stressed the fuck out and unhappy most of the time I had a revelation. Well a sort of revelation – my doctor called it a panic attack 😫. She also prescribed some pills. But instead, I threw them out, and signed up for a meditation class.

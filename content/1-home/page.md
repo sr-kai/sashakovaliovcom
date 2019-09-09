@@ -12,7 +12,7 @@ I teach meditation in Los Angeles, California.
 
 Check out some of the projects I'm working on right now and read the blog for the updates.
 
-## Lates posts
+## Latest posts
 
 [blogchanges /blog/]
 
