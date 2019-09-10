@@ -127,5 +127,10 @@ Why do you think the conversational bots are so popular? Because we fucking hate
 
 *Photo by [Jon Tyson](https://unsplash.com/@jontyson?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/ask-questions?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)*
 
-<div id="commento"></div>
-<script src="https://cdn.commento.io/js/commento.js"></script>
+<div id="commento">
+<script defer
+  src="http://commento.example.com/js/commento.js"
+  data-css-override="https://justmeditate.com/system/commento.css"
+  data-auto-init="true">
+</script>
+</div>
