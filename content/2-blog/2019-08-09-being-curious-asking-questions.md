@@ -126,3 +126,6 @@ Why do you think the conversational bots are so popular? Because we fucking hate
 [image jon-tyson-what-do-you-mean-question.jpg 50%]
 
 *Photo by [Jon Tyson](https://unsplash.com/@jontyson?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/ask-questions?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)*
+
+<div id="commento"></div>
+<script src="https://cdn.commento.io/js/commento.js"></script>
