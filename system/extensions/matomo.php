@@ -23,14 +23,11 @@ class YellowMatomo {
             $siteId = $this->yellow->system->get("matomoSiteId");
             if (empty($url)) $url = $this->yellow->toolbox->getServerUrl();
             $output = "<script type=\"text/javascript\">\n";
-            $output .= "var _paq = _paq || [];\n";
-            $output .= "(function(){ var u=\"".strencode($url)."\";\n";
-            $output .= "_paq.push(['setSiteId', '".strencode($siteId)."']);\n";
-            $output .= "_paq.push(['setTrackerUrl', u+'piwik.php']);\n";
-            $output .= "_paq.push(['trackPageView']);\n";
-            $output .= "_paq.push(['enableLinkTracking']);\n";
-            $output .= "var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript'; g.defer=true; g.async=true; g.src=u+'piwik.js';\n";
-            $output .= "s.parentNode.insertBefore(g,s); })();\n";
+            $output .= "(function(f, a, t, h, o, m){a[h]=a[h]||function(){(a[h].q=a[h].q||[]).push(arguments)};\n";
+            $output .= "o=f.createElement('script'),m=f.getElementsByTagName('script')[0];o.async=1; o.src=t; o.id='fathom-script';\n";
+            $output .= "m.parentNode.insertBefore(o,m)})(document, window, '//cdn.usefathom.com/tracker.js', 'fathom');\n";
+            $output .= "fathom('set', 'siteId', 'HXPOPXOC');\n";
+            $output .= "fathom('trackPageview')\n";
             $output .= "</script>\n";
         }
         return $output;
