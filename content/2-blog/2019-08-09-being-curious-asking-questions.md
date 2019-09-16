@@ -125,7 +125,7 @@ Why do you think the conversational bots are so popular? Because we fucking hate
 
 <div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
 📧 Like this post?
-Subscribe to my newsletter to receieve long-form content on meditation, marketing and quality of life
+Subscribe to my newsletter to receive long-form content on meditation, marketing and quality of life
 <form class="contact-form" action="https://justmeditate.com/sendy/subscribe" method="POST" accept-charset="utf-8">
 	<label for="name" class="contact-name">Name:</label><br/>
 	<input type="text" name="name" id="name" class="form-control"/>
@@ -139,3 +139,4 @@ Subscribe to my newsletter to receieve long-form content on meditation, marketin
     </p>
 </form>
 </div>
+
