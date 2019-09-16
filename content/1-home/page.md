@@ -1,7 +1,7 @@
 ---
 Title: Hey-hey 😊
 TitleNavigation : 🏡 Home
-TitleHeader: Welcome to Sasha Kovaliov
+TitleHeader: Welcome to Sasha Kovaliov | Long-form content on meditation and marketing.
 Author: Sasha Kovaliov
 Email: mail@sashakovaliov.com
 Image: sashakovaliov.jpg

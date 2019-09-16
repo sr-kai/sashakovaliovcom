@@ -123,14 +123,19 @@ Asking questions makes us more human and kinder.
 
 Why do you think the conversational bots are so popular? Because we fucking hate forms.
 
-[image jon-tyson-what-do-you-mean-question.jpg 50%]
-
-*Photo by [Jon Tyson](https://unsplash.com/@jontyson?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/ask-questions?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)*
-
-<div id="commento">
-<script defer
-  src="http://commento.example.com/js/commento.js"
-  data-css-override="https://justmeditate.com/system/commento.css"
-  data-auto-init="true">
-</script>
+<div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
+📧 Like this post?
+Subscribe to my newsletter to receieve long-form content on meditation, marketing and quality of life
+<form class="contact-form" action="https://justmeditate.com/sendy/subscribe" method="POST" accept-charset="utf-8">
+	<label for="name" class="contact-name">Name:</label><br/>
+	<input type="text" name="name" id="name" class="form-control"/>
+	<br/>
+	<label for="email">Email:</label><br/>
+	<input type="email" name="email" id="email" class="form-control"/><br/>
+	<input type="hidden" name="list" value="Z4wOXzIMrTlNgROTr892FP8A"/>
+	<input type="hidden" name="subform" value="yes"/>
+	<p>
+    <button class="btn contact-btn">Subscribe</button>
+    </p>
+</form>
 </div>
