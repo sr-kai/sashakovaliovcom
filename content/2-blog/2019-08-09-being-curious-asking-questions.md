@@ -139,4 +139,5 @@ Subscribe to my newsletter to receive long-form content on meditation, marketing
     </p>
 </form>
 </div>
-
+<div id="commento"></div>
+<script src="https://cdn.commento.io/js/commento.js"></script>
