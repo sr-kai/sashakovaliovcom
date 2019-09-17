@@ -139,5 +139,9 @@ Subscribe to my newsletter to receive long-form content on meditation, marketing
     </p>
 </form>
 </div>
+</p>
+<script defer
+  src="http://commento.example.com/js/commento.js"
+  data-no-fonts="true">
+</script>
 <div id="commento"></div>
-<script src="https://cdn.commento.io/js/commento.js"></script>
