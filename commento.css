@@ -1,0 +1,27 @@
+.commento-root, .commento-root-font {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif;
+}
+
+.commento-footer {
+    display: none;
+}
+
+.commento-root .commento-submit-button {
+    background: #cf3621;
+}
+
+.commento-root .commento-button {
+    margin-right: 0;
+}
+
+.commento-root .commento-login .commento-login-text {
+    height: auto;
+    margin-right: 0;
+    font-weight: 300;
+    color: #cf3621;
+}
+
+.commento-root .commento-markdown-button {
+    display: none;
+}
