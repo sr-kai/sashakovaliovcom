@@ -37,3 +37,8 @@
 .commento-root .commento-login-box-container .commento-login-box .commento-email-container .commento-email .commento-input {
     height: 30px;
 }
+
+.commento-root .commento-round-check input[type="checkbox"]:checked + label::before, .commento-root .commento-round-check input[type="radio"]:checked + label::before {
+    background: #cf3621;
+    border: 1px solid #cf3621;
+}
