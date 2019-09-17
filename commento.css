@@ -25,3 +25,15 @@
 .commento-root .commento-markdown-button {
     display: none;
 }
+
+.commento-root .commento-login-box-container .commento-login-box .commento-email-container .commento-email .commento-email-button {
+    color: #cf3621;
+}
+
+.commento-root a {
+    color: #cf3621;
+}
+
+.commento-root .commento-login-box-container .commento-login-box .commento-email-container .commento-email .commento-input {
+    height: 30px;
+}
