@@ -21,7 +21,7 @@ So, I got curious about the roots of my relationship with time. Was it possible 
 
 Good news, everyone! Yes, it's possible and what's even more important, it feels damn freeing.
 
-Let's dive into it. We are going to explore how our time perception has changed since we were kids, what modern physics thinks about time in comparison to spirituality view on the subject, and how you can reframe your own thinking.
+Let's dive into it. We are going to explore how our time perception has changed since we were kids, what modern physics thinks about time in comparison to spirituality, and how you can reframe your own thinking.
 
 [--more--]
 
