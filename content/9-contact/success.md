@@ -1,6 +1,6 @@
 ---
 Title: You are in 🎉🎉🎉
 ---
-Thanks for subscribing!
+Just one more thing!
 
-You will receive an email for new blog posts and major updates.
+Please check your email and click the confirmation link to receive the updates. Thank you 🙌
