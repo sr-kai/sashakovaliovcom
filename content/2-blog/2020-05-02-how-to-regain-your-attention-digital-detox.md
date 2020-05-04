@@ -5,6 +5,8 @@ Author: Sasha Kovaliov
 Layout: blog
 Tag: attention, awarness, experiments
 ---
+[image still-water.jpg]
+
 Last week I’ve been conducting an interesting experiment. 
 
 I decided to turn off all my gadgets: phones, TV, computers, iPad, anything that has a screen. The goal was simple – to regain my attention and awareness, and increase the power of my concentration. Could I disconnect for 5 days straight? Would it be possible to maintain the willpower and motivation and stick to the commitment? On top of it, I decided to water fast for these five days as well. I’m not crazy, I just like to experiment and learn new things 😊
@@ -19,6 +21,8 @@ I’d like to share my experience and thoughts on the process and hopefully you 
 
 ## Reasons and Goals
 
+[image black-yellow.jpg]
+
 Lately it’s been difficult for me to start working on a task without procrastinating. The nights were spent with a movie or one of the old trusted shows, endless Twitch streams accompanied by snacking and aimlessly scrolling and tapping my phone. I wasn’t really paying attention to the content on the TV, nor was I fully engaged with my phone. It was a tiring tug of war game, with my awareness and attention pulled from one source of dull entertainment to another. 
 
 When my phone told me that I had 4+ hours of screen time per day, I was shocked 🤯 That’s a whole day and night per week! Add computer work, video games, movies and shows on top and I’m pretty sure it would be close to 10 or more hours per day. Truly astounding discovery.
@@ -30,6 +34,8 @@ First and foremost, I wanted to reclaim my attention and awareness. Another goal
 Understandably, it’s a difficult and novel situation we find ourselves in right now. Daily norms and expectations have been uprooted in a blink of an eye and we humans strongly dislike any kind of change. Please pay attention to your mind and body before you venture out on any kind of cleanse. Be kind to yourself and others, be gentle.
 
 ## Let’s prepare
+
+[image columns.jpg]
 
 > “A beginning is the time for taking the most delicate care that the balances are correct.”
 >
@@ -82,6 +88,8 @@ I had to turn my phone on Thursday to order some juice, to slowly exit fasting. 
 Adapt to your own situation, believe in yourself, trust the path and ask for help and support when you need it.
 
 ## What to do
+
+[image child-playing.jpg]
 
 Now, what the actual fuck are you going to do with all this time you have on your hands? 😁 I can tell you for sure you won’t be lazy.
 
@@ -137,9 +145,11 @@ And how it felt this morning:
 
 > “What a wonderful feeling! Heard a woman laugh passing by and I could feel how sincere and bold her energy was. That laugh was true and beautiful. Feeling rested and at ease”.
 
-If you have an established meditation practice you know what to do and how to work. I found it useful to have a book on meditation during this journey. You will find illuminating and encouraging answers to your questions. I was reading Insight Meditation The Practice Of Freedom by Joseph Goldstein ([find in your library](https://www.overdrive.com/media/1751079/libraries?slug=insight-meditation) or [buy on Amazon](https://www.amazon.com/Insight-Meditation-Practice-Joseph-Goldstein/dp/1590300165)). It’s a short book, each chapter is a concise dharma lesson and you can read it starting on any page.
+If you have an established meditation practice you know what to do and how to work. I found it useful to have a book on meditation during this journey. You will find illuminating and encouraging answers to your questions. 
 
-Another book that you can devote your time to is Zen Mind, Beginner's Mind by Shunryu Suzuki ([find in your library](https://www.overdrive.com/media/550972/libraries?slug=zen-mind-beginners-mind) or [buy on Amazon](https://www.amazon.com/Zen-Mind-Beginners-Informal-Meditation/dp/B01CD5I0CY)). Its language is beautiful and full of fables that will keep your practice satiated and strong.
+I was reading **Insight Meditation The Practice Of Freedom** by Joseph Goldstein ([find in your library](https://www.overdrive.com/media/1751079/libraries?slug=insight-meditation) or [buy on Amazon](https://www.amazon.com/Insight-Meditation-Practice-Joseph-Goldstein/dp/1590300165)). It’s a short book, each chapter is a concise dharma lesson and you can read it starting on any page.
+
+Another book that you can devote your time to is **Zen Mind, Beginner's Mind** by Shunryu Suzuki ([find in your library](https://www.overdrive.com/media/550972/libraries?slug=zen-mind-beginners-mind) or [buy on Amazon](https://www.amazon.com/Zen-Mind-Beginners-Informal-Meditation/dp/B01CD5I0CY)). Its language is beautiful and full of fables that will keep your practice satiated and strong.
 
 I wish you determination and wisdom on your path ❤
 
@@ -149,15 +159,17 @@ Don’t force yourself to start big. Right now, you won’t have the support of 
 
 Make your companion one of these books or any book for beginners you have:
 
-How to Meditate by Pema Chodron ([find in your library](https://www.overdrive.com/media/1284682/libraries?slug=how-to-meditate) or [buy on Amazon](https://www.amazon.com/How-Meditate-Practical-Making-Friends/dp/1604079339)) or
+**How to Meditate** by Pema Chodron ([find in your library](https://www.overdrive.com/media/1284682/libraries?slug=how-to-meditate) or [buy on Amazon](https://www.amazon.com/How-Meditate-Practical-Making-Friends/dp/1604079339)) or
 
-Mindfulness in Plan English by Bhante Henelopa Gunaratana ([find in your library](https://www.overdrive.com/media/450940/libraries?slug=mindfulness-in-plain-english) or [buy on Amazon](https://www.amazon.com/Mindfulness-English-Bhante-Henepola-Gunaratana/dp/0861719069)).
+**Mindfulness in Plan English** by Bhante Henelopa Gunaratana ([find in your library](https://www.overdrive.com/media/450940/libraries?slug=mindfulness-in-plain-english) or [buy on Amazon](https://www.amazon.com/Mindfulness-English-Bhante-Henepola-Gunaratana/dp/0861719069)).
 
 Read a bit of them before you step on this journey, so you know what to expect. I hope you will find your meditation practice a valuable addition to your days and it will foster your motivation, compassion and determination.
 
 Wishing you calmness and love for yourself 🤗 
 
 ## Motivation Curve
+
+[image fireworks.jpg]
 
 > “What has mood to do with it? You fight when the necessity arises – no matter the mood! Mood’s a thing for cattle or making love or playing the baliset”.
 >
@@ -189,7 +201,7 @@ It’s another opportunity to increase self-awarness and your attention span. Pl
 
 ## Curiosity
 
-Be curious. For this week be open and non-judgmental to what’s happening. Don’t make rapid assumptions, investigate even mundane things, see their essence and nature.
+[Be curious](https://www.sashakovaliov.com/blog/being-curious-asking-questions). For this week be open and non-judgmental to what’s happening. Don’t make rapid assumptions, investigate even mundane things, see their essence and nature.
 
 Remember the feeling when you were a kid and everything around was full of unexpected and you explored freely. This is the right attitude.
 
@@ -200,6 +212,8 @@ Remember the feeling when you were a kid and everything around was full of unexp
 > Not knowing if something is happening or has stopped happening is delusion.”
 
 ## Empathy and kindness
+
+[image cat-sleeping.jpg]
 
 In closing I would like to remind you to be kind and compassionate with what you set out to do. No matter how short or long your tech detox is going to be, you need to take care of yourself, your body and mind.
 
