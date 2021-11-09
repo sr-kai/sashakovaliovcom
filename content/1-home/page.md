@@ -27,7 +27,7 @@ Long-form content on meditation, marketing and quality of life
 	<br/>
 	<label for="email">Email:</label><br/>
 	<input type="email" name="email" id="email" class="form-control"/><br/>
-	<input type="hidden" name="list" value="IBoV1T3hj9y6VJDJtxs3DA"/>
+	<input type="hidden" name="list" value="PHfPPHCCcYma763FnhD93raA"/>
 	<input type="hidden" name="subform" value="yes"/>
 	<p>
     <button class="btn contact-btn">Subscribe</button>
