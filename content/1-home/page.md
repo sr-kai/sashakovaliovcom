@@ -1,7 +1,7 @@
 ---
 Title: Hey-hey 😊
 TitleNavigation : 🏡 Home
-TitleHeader: Long-form content on happiness, meditation and learning | Sasha Kovaliov
+TitleHeader: Long-form content on happiness, meditation and learning * Sasha Kovaliov
 Author: Sasha Kovaliov
 Email: mail@sashakovaliov.com
 Image: sashakovaliov.jpg
