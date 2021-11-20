@@ -33,11 +33,6 @@ Online meditation and happiness classes and courses.
 
 What if you blended marketing and mindfulness with learning and development? My approach to modern L&D practices.
 
-<!--[Meditation Journal]()
-
-My meditation journal entries. Feel free to browse and maybe you will find inspiration and motivation to deepen your own spiritual practice and spark insights.
--->
-
 </br>
 
 <div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
