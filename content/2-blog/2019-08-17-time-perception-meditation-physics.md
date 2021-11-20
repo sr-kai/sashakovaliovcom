@@ -201,28 +201,3 @@ Being able to look at time, such a monumental and existential phenomenon, in a r
 You may decide to experience it through practicing mindfulness or truly comprehend it scientifically. Either way, whenever you are worried that you don’t have enough time, just notice that and remember that you  have all the time in the world.
 
 [^1]: I encourage you to read this wonderful book, it's like poetry on physics. You can either find it in your [local library](https://www.overdrive.com/media/3581402/libraries?slug=the-order-of-time) or [get it on Amazon](https://amzn.to/2Odmu14).
-
-<div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
-📧 Like this post?
-Subscribe to my newsletter to receive long-form content on meditation, marketing and quality of life
-<form class="contact-form" action="https://sendy.justmeditate.com/subscribe" method="POST" accept-charset="utf-8">
-	<label for="name" class="contact-name">Name:</label><br/>
-	<input type="text" name="name" id="name" class="form-control"/>
-	<br/>
-	<label for="email">Email:</label><br/>
-	<input type="email" name="email" id="email" class="form-control"/><br/>
-	<input type="hidden" name="list" value="IBoV1T3hj9y6VJDJtxs3DA"/>
-	<input type="hidden" name="subform" value="yes"/>
-	<p>
-    <button class="btn contact-btn">Subscribe</button>
-    </p>
-</form>
-</div>
-</p>
-
-<script defer
-  src="https://cdn.commento.io/js/commento.js"
-  data-no-fonts="true"
-  data-css-override="../commento.css">
-</script>
-<div id="commento"></div>
