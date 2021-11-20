@@ -9,7 +9,33 @@
 <div class="<?php echo $this->yellow->page->getHtml("entryClass") ?>">
 <div class="entry-title"><h1><?php echo $this->yellow->page->getHtml("titleContent") ?></h1></div>
 <div class="entry-meta"><p><?php echo $this->yellow->page->getDateHtml("published") ?> <?php echo $this->yellow->text->getHtml("blogBy") ?> <?php $authorCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("author")) as $author) { if (++$authorCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blog")->getLocation(true).$this->yellow->toolbox->normaliseArgs("author:$author")."\">".htmlspecialchars($author)."</a>"; } ?></p></div>
-<div class="entry-content"><?php echo $this->yellow->page->getContent() ?></div>
+<div class="entry-content"><?php echo $this->yellow->page->getContent() ?>
+
+<div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
+    <strong>Like this post? 📧 Subscribe to my newsletter</strong></br>
+        Long-form content on meditation, happiness, and learning, delivered to your inbox bi-weekly.
+        <form class="contact-form" action="https://sendy.justmeditate.com/subscribe" method="POST" accept-charset="utf-8">
+            <label for="name" class="contact-name">Name:</label><br/>
+            <input type="text" name="name" id="name" class="form-control"/>
+            <br/>
+            <label for="email">Email:</label><br/>
+            <input type="email" name="email" id="email" class="form-control"/><br/>
+            <input type="hidden" name="list" value="PHfPPHCCcYma763FnhD93raA"/>
+            <input type="hidden" name="subform" value="yes"/>
+            <p>
+            <button class="btn contact-btn">Subscribe</button>
+            </p>
+        </form>
+        </div>
+</div>
+<p>
+    <script defer
+    src="https://cdn.commento.io/js/commento.js"
+    data-no-fonts="true"
+    data-css-override="../commento.css">
+  </script>
+  <div id="commento"></div>    
+</p>
 <?php echo $this->yellow->page->getExtra("links") ?>
 <?php if ($this->yellow->page->isExisting("tag")): ?>
 <div class="entry-tags">

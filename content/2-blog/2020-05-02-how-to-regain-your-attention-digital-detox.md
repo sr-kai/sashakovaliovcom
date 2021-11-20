@@ -223,26 +223,3 @@ Extraordinary things will happen that will require exceptional solutions. Be ope
 
 If you have any questions about the process or would like to share your experience, please do it here in the comments so we all can learn.
 
-<div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
-📧 Like this post?
-Subscribe to my newsletter to receive long-form content on meditation, marketing and quality of life
-<form class="contact-form" action="https://sendy.justmeditate.com/subscribe" method="POST" accept-charset="utf-8">
-	<label for="name" class="contact-name">Name:</label><br/>
-	<input type="text" name="name" id="name" class="form-control"/>
-	<br/>
-	<label for="email">Email:</label><br/>
-	<input type="email" name="email" id="email" class="form-control"/><br/>
-	<input type="hidden" name="list" value="IBoV1T3hj9y6VJDJtxs3DA"/>
-	<input type="hidden" name="subform" value="yes"/>
-	<p>
-    <button class="btn contact-btn">Subscribe</button>
-    </p>
-</form>
-</div>
-<script defer
-  src="https://cdn.commento.io/js/commento.js"
-  data-no-fonts="true"
-  data-css-override="../commento.css">
-</script>
-<div id="commento"></div>
-
