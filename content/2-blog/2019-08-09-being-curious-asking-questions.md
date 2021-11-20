@@ -122,3 +122,27 @@ If you have a question on your mind and you are in a class or at a conference, w
 Asking questions makes us more human and kinder. 
 
 Why do you think the conversational bots are so popular? Because we fucking hate forms.
+
+<div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
+📧 Like this post?
+Subscribe to my newsletter to receive long-form content on meditation, marketing and quality of life
+<form class="contact-form" action="https://sendy.justmeditate.com/subscribe" method="POST" accept-charset="utf-8">
+	<label for="name" class="contact-name">Name:</label><br/>
+	<input type="text" name="name" id="name" class="form-control"/>
+	<br/>
+	<label for="email">Email:</label><br/>
+	<input type="email" name="email" id="email" class="form-control"/><br/>
+	<input type="hidden" name="list" value="IBoV1T3hj9y6VJDJtxs3DA"/>
+	<input type="hidden" name="subform" value="yes"/>
+	<p>
+    <button class="btn contact-btn">Subscribe</button>
+    </p>
+</form>
+</div>
+</p>
+<script defer
+  src="https://cdn.commento.io/js/commento.js"
+  data-no-fonts="true"
+  data-css-override="../commento.css">
+</script>
+<div id="commento"></div>

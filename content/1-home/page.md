@@ -1,43 +1,26 @@
 ---
 Title: Hey-hey 😊
 TitleNavigation : 🏡 Home
-TitleHeader: Long-form content on happiness, meditation and learning * Sasha Kovaliov
+TitleHeader: Welcome to Sasha Kovaliov | Long-form content on meditation and marketing.
 Author: Sasha Kovaliov
 Email: mail@sashakovaliov.com
 Image: sashakovaliov.jpg
 ---
 My name is Sasha Kovaliov.
 
-I teach meditation and happiness in Los Angeles, California.
+I teach meditation in Los Angeles, California.
 
-This is a place for me to share my ideas and insights with the world, and inspire you to be happier.
-
-Often we take ourselves and our lives too serious, so a good place to start is with a smile 😄
+Check out some of the projects I'm working on right now and read the blog for the updates.
 
 ## Latest posts
 
 [blogchanges /blog/]
 
-## Projects
-
-**[Just Meditate](https://justmeditate.com)**
-
-Free short meditation sessions anywhere, anytime.
-No installs, no apps, no downloads. Just Meditate.
-
-**[🌻 School of Obvious Magic](https://obviousmagic.co)**
-
-Online meditation and happiness classes and courses.
-
-**[Lean Learning](https://leanlearning.sashakovaliov.com/)**
-
-What if you blended marketing and mindfulness with learning and development? My approach to modern L&D practices.
-
 </br>
 
 <div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
 <strong>📧 Subscribe to my newsletter</strong></br>
-Long-form content on meditation, happiness, and learning, delivered to your inbox bi-weekly.
+Long-form content on meditation, marketing and quality of life
 <form class="contact-form" action="https://sendy.justmeditate.com/subscribe" method="POST" accept-charset="utf-8">
 	<label for="name" class="contact-name">Name:</label><br/>
 	<input type="text" name="name" id="name" class="form-control"/>
