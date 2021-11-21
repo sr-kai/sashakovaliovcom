@@ -222,4 +222,3 @@ Some things that I outlined will work for you, others will now. Only you can tru
 Extraordinary things will happen that will require exceptional solutions. Be open, be flexible, do no harm to yourself and others, practice empathy and kindness.
 
 If you have any questions about the process or would like to share your experience, please do it here in the comments so we all can learn.
-

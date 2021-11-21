@@ -9,8 +9,9 @@
 <div class="<?php echo $this->yellow->page->getHtml("entryClass") ?>">
 <div class="entry-title"><h1><?php echo $this->yellow->page->getHtml("titleContent") ?></h1></div>
 <div class="entry-meta"><p><?php echo $this->yellow->page->getDateHtml("published") ?> <?php echo $this->yellow->text->getHtml("blogBy") ?> <?php $authorCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("author")) as $author) { if (++$authorCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blog")->getLocation(true).$this->yellow->toolbox->normaliseArgs("author:$author")."\">".htmlspecialchars($author)."</a>"; } ?></p></div>
-<div class="entry-content"><?php echo $this->yellow->page->getContent() ?>
-
+<div class="entry-content"><?php echo $this->yellow->page->getContent() ?></div>
+<div>
+<?php if ($tag != "meditation journal" ) : ?>
 <div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
     <strong>Like this post? 📧 Subscribe to my newsletter</strong></br>
         Long-form content on meditation, happiness, and learning, delivered to your inbox bi-weekly.
@@ -26,8 +27,8 @@
             <button class="btn contact-btn">Subscribe</button>
             </p>
         </form>
-        </div>
 </div>
+
 <p>
     <script defer
     src="https://cdn.commento.io/js/commento.js"
@@ -36,6 +37,10 @@
   </script>
   <div id="commento"></div>    
 </p>
+
+<?php endif; ?>
+</div>
+
 <?php echo $this->yellow->page->getExtra("links") ?>
 <?php if ($this->yellow->page->isExisting("tag")): ?>
 <div class="entry-tags">
@@ -47,3 +52,4 @@
 </div>
 </div>
 <?php $this->yellow->layout("footer") ?>
+</div>
