@@ -101,7 +101,7 @@ When you drop your phone 😲, your hand is able to catch it before it hits the 
 
 Saint Augustine, quite skillfully noticed, that time is created in our mind, and is not an outside force. When we listen to music, we are able to give meaning to a sound in relation to a previous sound and a sound following it. It seems paradoxical, but music can happen only in time, while we are always stuck in the present moment. So how does it work?
 
-> It is possible, Augustine observes, because our consciousness is based on memory and on anticipation. A hymn, a song, is in some way present in our minds in a unified form, held together by something – by that which we take time to be. And hence this is what time is: it is entirely in the present, in our minds, as memory and as anticipation.
+> It is possible, Augustine observes, because our consciousness is based on memory and on anticipation. A hymn, a song, is in some way present in our minds in a unified form, held together by something  –  by that which we take time to be. And hence this is what time is: it is entirely in the present, in our minds, as memory and as anticipation.
 
 But what fascinates me is the fact that mindfulness practitioners came to the same conclusion millennia ago. You exist in the now, present. Focusing on the present, being in the moment, being mindful about now and what is happening right at this very second is the core of mindfulness practice. Everything else is a delusion, a fantasy world either out of our reach, or that has already happened.
 

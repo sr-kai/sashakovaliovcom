@@ -9,7 +9,7 @@ Tag: attention, awarness, experiments
 
 Last week I’ve been conducting an interesting experiment. 
 
-I decided to turn off all my gadgets: phones, TV, computers, iPad, anything that has a screen. The goal was simple – to regain my attention and awareness, and increase the power of my concentration. Could I disconnect for 5 days straight? Would it be possible to maintain the willpower and motivation and stick to the commitment? On top of it, I decided to water fast for these five days as well. I’m not crazy, I just like to experiment and learn new things 😊
+I decided to turn off all my gadgets: phones, TV, computers, iPad, anything that has a screen. The goal was simple  –  to regain my attention and awareness, and increase the power of my concentration. Could I disconnect for 5 days straight? Would it be possible to maintain the willpower and motivation and stick to the commitment? On top of it, I decided to water fast for these five days as well. I’m not crazy, I just like to experiment and learn new things 😊
 
 I started on Monday and today is Saturday. I held off for 5 days. 
 
@@ -69,7 +69,7 @@ Make sure any delivers you are getting this week can arrive without your phone�
 
 Schedule will give you an element of control over every day and something to look forward to. Routine will carry out a supportive function and feel like a blessing for your mind, as it does expect certainty.
 
-Don’t be too strict, this is not an army camp. At the end of the day, you yourself decided to do it. Don’t be too amorphous about the day plan either. If it works for you, write a schedule on the fridge or some other visible place. If you are like me and prefer a mental vision of a day – that works fine too.
+Don’t be too strict, this is not an army camp. At the end of the day, you yourself decided to do it. Don’t be too amorphous about the day plan either. If it works for you, write a schedule on the fridge or some other visible place. If you are like me and prefer a mental vision of a day  –  that works fine too.
 
 Some days will be a drag, so be flexible and attentive. Do not force yourself to follow everything to the dot. You are already working with limited resources and you need motivation and energy to stay on track.
 
@@ -153,7 +153,7 @@ Another book that you can devote your time to is **Zen Mind, Beginner's Mind** b
 
 I wish you determination and wisdom on your path ❤
 
-If you are just starting out, find a couple of short guided meditations for every day. If you have an old music player or a dumb phone laying around, just use it to listen to the downloaded files. For the brave – burn a CD or record a tape and have some fun in the process! This way you don’t have to deal with the screens at all, but it does require some unorthodox rarish equipment.
+If you are just starting out, find a couple of short guided meditations for every day. If you have an old music player or a dumb phone laying around, just use it to listen to the downloaded files. For the brave  –  burn a CD or record a tape and have some fun in the process! This way you don’t have to deal with the screens at all, but it does require some unorthodox rarish equipment.
 
 Don’t force yourself to start big. Right now, you won’t have the support of a teacher or a sangha, your community. Your untrained mind will fight you every moment of your short sit, so be kind, be gentle and start with 5 minutes. There is a lot you can learn in these long five minutes.
 
@@ -171,7 +171,7 @@ Wishing you calmness and love for yourself 🤗
 
 [image fireworks.jpg]
 
-> “What has mood to do with it? You fight when the necessity arises – no matter the mood! Mood’s a thing for cattle or making love or playing the baliset”.
+> “What has mood to do with it? You fight when the necessity arises  –  no matter the mood! Mood’s a thing for cattle or making love or playing the baliset”.
 >
 > <span class="quotetitle">Frank Herbert, *Dune*</span>
 
@@ -179,7 +179,7 @@ As with all beginnings, we start high and strong and will slump into the valley 
 
 These are just feelings that are passing by. The moment you remember that and let them fade away, they have no power over you. The more trained your mind is, the less difficult this stage will be, yet it will still be a formidable opponent.
 
-> “The mind can go either direction under stress – towards positive or toward negative: on or off. Think of it as a secptrum whose extremes are unconsciousness at the negative end and hyperconsciousness at the positive end. The way the mind will lean under stress is strongly influenced by training”.
+> “The mind can go either direction under stress  –  towards positive or toward negative: on or off. Think of it as a secptrum whose extremes are unconsciousness at the negative end and hyperconsciousness at the positive end. The way the mind will lean under stress is strongly influenced by training”.
 >
 > <span class="quotetitle">Frank Herbert, *Dune*</span>
 
