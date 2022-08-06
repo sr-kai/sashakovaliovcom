@@ -1,0 +1,44 @@
+.commento-root, .commento-root-font {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif;
+}
+
+.commento-footer {
+    display: none;
+}
+
+.commento-root .commento-submit-button {
+    background: #cf3621;
+}
+
+.commento-root .commento-button {
+    margin-right: 0;
+}
+
+.commento-root .commento-login .commento-login-text {
+    height: auto;
+    margin-right: 0;
+    font-weight: 300;
+    color: #cf3621;
+}
+
+.commento-root .commento-markdown-button {
+    display: none;
+}
+
+.commento-root .commento-login-box-container .commento-login-box .commento-email-container .commento-email .commento-email-button {
+    color: #cf3621;
+}
+
+.commento-root a {
+    color: #cf3621;
+}
+
+.commento-root .commento-login-box-container .commento-login-box .commento-email-container .commento-email .commento-input {
+    height: 30px;
+}
+
+.commento-root .commento-round-check input[type="checkbox"]:checked + label::before, .commento-root .commento-round-check input[type="radio"]:checked + label::before {
+    background: #cf3621;
+    border: 1px solid #cf3621;
+}

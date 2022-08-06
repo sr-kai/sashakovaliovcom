@@ -1,16 +1,26 @@
 <?php
-// Bundle extension, https://github.com/datenstrom/yellow-extensions/tree/master/features/bundle
-// Copyright (c) 2013-2019 Datenstrom, https://datenstrom.se
-// This file may be used and distributed under the terms of the public license.
+// Bundle extension, https://github.com/datenstrom/yellow-extensions/tree/master/source/bundle
 
 class YellowBundle {
-    const VERSION = "0.8.5";
-    const TYPE = "feature";
-    public $yellow;         //access to API
+    const VERSION = "0.8.23";
+    public $yellow;         // access to API
 
     // Handle initialisation
     public function onLoad($yellow) {
         $this->yellow = $yellow;
+    }
+    
+    // Handle update
+    public function onUpdate($action) {
+        if ($action=="clean" || $action=="daily" || $action=="uninstall") {
+            $statusCode = 200;
+            $path = $this->yellow->system->get("coreExtensionDirectory");
+            foreach ($this->yellow->toolbox->getDirectoryEntries($path, "/^bundle-(.*)/", false, false) as $entry) {
+                $cleanup = $action!="daily" || !$this->isBundleRequired($entry);
+                if ($cleanup && !$this->yellow->toolbox->deleteFile($entry)) $statusCode = 500;
+            }
+            if ($statusCode==500) $this->yellow->log("error", "Can't delete files in directory '$path'!\n");
+        }
     }
     
     // Handle page output data
@@ -22,69 +32,48 @@ class YellowBundle {
         return $output;
     }
     
-    // Handle command
-    public function onCommand($args) {
-        list($command) = $args;
-        switch ($command) {
-            case "clean":   $statusCode = $this->processCommandClean($args); break;
-            default:        $statusCode = 0;
-        }
-        return $statusCode;
-    }
-    
-    // Process command to clean bundles
-    public function processCommandClean($args) {
-        $statusCode = 0;
-        list($command, $path) = $args;
-        if ($path=="all") {
-            $path = $this->yellow->system->get("resourceDir");
-            foreach ($this->yellow->toolbox->getDirectoryEntries($path, "/bundle-.*/", false, false) as $entry) {
-                if (!$this->yellow->toolbox->deleteFile($entry)) $statusCode = 500;
-            }
-            if ($statusCode==500) echo "ERROR cleaning bundles: Can't delete files in directory '$path'!\n";
-        }
-        return $statusCode;
-    }
-    
     // Normalise page head
     public function normaliseHead($text) {
-        $dataMeta = $dataLink = $dataCss = $dataScript = $dataOther = array();
+        $dataMeta = $dataLink = $dataCss = $dataScriptDefer = $dataScriptNow = $dataOther = array();
         foreach ($this->yellow->toolbox->getTextLines($text) as $line) {
             if (preg_match("/^<meta (.*?)>$/i", $line) || preg_match("/^<title>(.*?)<\/title>$/i", $line)) {
                 array_push($dataMeta, $line);
             } elseif (preg_match("/^<link (.*?)href=\"([^\"]+)\"(.*?)>$/i", $line, $matches)) {
                 if (preg_match("/\"stylesheet\"/i", $line)) {
-                    if (is_null($dataCss[$matches[2]])) $dataCss[$matches[2]] = $line;
+                    if (!isset($dataCss[$matches[2]])) $dataCss[$matches[2]] = $line;
                 } else {
                     array_push($dataLink, $line);
                 }
             } elseif (preg_match("/^<script (.*?)src=\"([^\"]+)\"(.*?)><\/script>$/i", $line, $matches)) {
                 if (preg_match("/\"defer\"/i", $line)) {
-                    if (is_null($dataScript[$matches[2]])) $dataScript[$matches[2]] = $line;
+                    if (!isset($dataScriptDefer[$matches[2]])) $dataScriptDefer[$matches[2]] = $line;
                 } else {
-                    array_push($dataOther, $line);
+                    if (!isset($dataScriptNow[$matches[2]])) $dataScriptNow[$matches[2]] = $line;
                 }
             } else {
                 array_push($dataOther, $line);
             }
         }
-        if (!defined("DEBUG") || DEBUG==0) {
+        if (!defined("DEBUG")) {
             $dataCss = $this->processBundle($dataCss, "css");
-            $dataScript = $this->processBundle($dataScript, "js");
+            $dataScriptDefer = $this->processBundle($dataScriptDefer, "js", "defer");
+            $dataScriptNow = $this->processBundle($dataScriptNow, "js");
         }
-        $output = implode($dataMeta).implode($dataLink).implode($dataCss).implode($dataScript).implode($dataOther);
+        $output = implode($dataMeta).implode($dataLink).implode($dataCss).
+            implode($dataScriptDefer).implode($dataScriptNow).implode($dataOther);
         return $output;
     }
     
     // Process bundle, create file on demand
-    public function processBundle($data, $type) {
+    public function processBundle($data, $type, $attribute = "") {
         $fileNames = array();
-        $scheme = $this->yellow->system->get("serverScheme");
-        $address = $this->yellow->system->get("serverAddress");
-        $base = $this->yellow->system->get("serverBase");
+        $modified = 0;
+        $scheme = $this->yellow->system->get("coreServerScheme");
+        $address = $this->yellow->system->get("coreServerAddress");
+        $base = $this->yellow->system->get("coreServerBase");
         foreach ($data as $key=>$value) {
             if (preg_match("/^\w+:/", $key)) continue;
-            if (preg_match("/data-bundle=\"none\"/i", $value)) continue;
+            if (preg_match("/data-bundle=\"exclude\"/i", $value)) continue;
             if (substru($key, 0, strlenu($base))!=$base) continue;
             $location = substru($key, strlenu($base));
             $fileName = $this->yellow->lookup->findFileFromSystem($location);
@@ -95,26 +84,27 @@ class YellowBundle {
             }
         }
         if (!empty($fileNames)) {
-            $id = substru(md5(implode($fileNames).$base), 0, 10);
-            $fileNameBundle = $this->yellow->system->get("resourceDir")."bundle-$id.min.$type";;
-            $locationBundle = $base.$this->yellow->system->get("resourceLocation")."bundle-$id.min.$type";
+            $id = $this->getBundleId($fileNames, $modified);
+            $fileNameBundle = $this->yellow->system->get("coreExtensionDirectory")."bundle-$id.min.$type";
+            $locationBundle = $base.$this->yellow->system->get("coreExtensionLocation")."bundle-$id.min.$type";
+            $rawDataAttribute = $attribute=="defer" ? "defer=\"defer\" " : "";
             if ($type=="css") {
                 $data[$locationBundle] = "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"".htmlspecialchars($locationBundle)."\" />\n";
             } else {
-                $data[$locationBundle] = "<script type=\"text/javascript\" defer=\"defer\" src=\"".htmlspecialchars($locationBundle)."\"></script>\n";
+                $data[$locationBundle] = "<script type=\"text/javascript\" ${rawDataAttribute}src=\"".htmlspecialchars($locationBundle)."\"></script>\n";
             }
             if ($this->yellow->toolbox->getFileModified($fileNameBundle)!=$modified) {
+                $fileDataBundle = "";
                 foreach ($fileNames as $fileName) {
                     $fileData = $this->yellow->toolbox->readFile($fileName);
-                    if (substrb($fileData, 0, 3)=="\xEF\xBB\xBF") $fileData = substrb($fileData, 3);
                     $fileData = $this->processBundleConvert($scheme, $address, $base, $fileData, $fileName, $type);
                     $fileData = $this->processBundleMinify($scheme, $address, $base, $fileData, $fileName, $type);
-                    if (!empty($fileDataNew)) $fileDataNew .= "\n\n";
-                    $fileDataNew .= "/* ".basename($fileName)." */\n";
-                    $fileDataNew .= $fileData;
+                    if (!empty($fileDataBundle)) $fileDataBundle .= "\n\n";
+                    $fileDataBundle .= $fileData;
                 }
+                if ($type=="css") $fileDataBundle = $this->normaliseCss($fileDataBundle);
                 if (is_file($fileNameBundle)) $this->yellow->toolbox->deleteFile($fileNameBundle);
-                if (!$this->yellow->toolbox->createFile($fileNameBundle, $fileDataNew) ||
+                if (!$this->yellow->toolbox->createFile($fileNameBundle, $fileDataBundle) ||
                     !$this->yellow->toolbox->modifyFile($fileNameBundle, $modified)) {
                     $this->yellow->page->error(500, "Can't write file '$fileNameBundle'!");
                 }
@@ -126,16 +116,16 @@ class YellowBundle {
     // Process bundle, convert URLs
     public function processBundleConvert($scheme, $address, $base, $fileData, $fileName, $type) {
         if ($type=="css") {
-            $extensionDirLength = strlenu($this->yellow->system->get("extensionDir"));
-            if (substru($fileName, 0, $extensionDirLength) == $this->yellow->system->get("extensionDir")) {
-                $base .= $this->yellow->system->get("extensionLocation");
+            $themeDirectoryLength = strlenu($this->yellow->system->get("coreThemeDirectory"));
+            if (substru($fileName, 0, $themeDirectoryLength) == $this->yellow->system->get("coreThemeDirectory")) {
+                $base .= $this->yellow->system->get("coreThemeLocation");
             } else {
-                $base .= $this->yellow->system->get("resourceLocation");
+                $base .= $this->yellow->system->get("coreExtensionLocation");
             }
             $thisCompatible = $this;
             $callback = function ($matches) use ($thisCompatible, $scheme, $address, $base) {
                 $url = $thisCompatible->yellow->lookup->normaliseUrl($scheme, $address, $base, $matches[1], false);
-                $url = strreplaceu("$scheme://$address", "", $url);
+                $url = str_replace("$scheme://$address", "", $url);
                 return "url(\"$url\")";
             };
             $fileData = preg_replace_callback("/url\([\'\"]?(.*?)[\'\"]?\)/", $callback, $fileData);
@@ -148,9 +138,61 @@ class YellowBundle {
         $minifier = $type=="css" ? new MinifyCss() : new MinifyJavaScript();
         if (preg_match("/\.min/", $fileName)) $minifier = new MinifyBasic();
         $minifier->add($fileData);
-        return $minifier->minify();
+        $fileData = $minifier->minify();
+        if (substrb($fileData, 0, 3)=="\xEF\xBB\xBF") $fileData = substrb($fileData, 3);
+        if (substrb($fileData, 0, 13)=="\"use strict\";" || substrb($fileData, 0, 13)=="'use strict';") $fileData = substrb($fileData, 13);
+        return "/* ".basename($fileName)." */\n".$fileData;
     }
- }
+    
+    // Normalise CSS, move import rules to top
+    public function normaliseCss($fileData) {
+        if (preg_match_all("/(;?)(@import (?<url>url\()?(?P<quotes>[\"\']?).+?(?P=quotes)(?(url)\)));?/", $fileData, $matches)) {
+            foreach ($matches[0] as $match) {
+                $fileData = str_replace($match, "", $fileData);
+            }
+            $fileData = "/* Import rules from files */\n".implode(";", $matches[2]).";\n\n".$fileData;
+        }
+        return $fileData;
+    }
+    
+    // Return bundle information
+    public function getBundleInformation($fileName) {
+        $locations = $fileNames = array();
+        $modified = 0;
+        $fileData = $this->yellow->toolbox->readFile($fileName);
+        foreach ($this->yellow->toolbox->getTextLines($fileData) as $line) {
+            if (preg_match("/^\/\* (\S*) \*\/$/", $line, $matches)) {
+                $fileNameOne = $this->yellow->system->get("coreExtensionDirectory").$matches[1];
+                $fileNameTwo = $this->yellow->system->get("coreThemeDirectory").$matches[1];
+                if (is_readable($fileNameOne)) {
+                    array_push($locations, $this->yellow->system->get("coreExtensionLocation").$matches[1]);
+                    array_push($fileNames, $fileNameOne);
+                    $modified = max($modified, $this->yellow->toolbox->getFileModified($fileNameOne));
+                } elseif (is_readable($fileNameTwo)) {
+                    array_push($locations, $this->yellow->system->get("coreThemeLocation").$matches[1]);
+                    array_push($fileNames, $fileNameTwo);
+                    $modified = max($modified, $this->yellow->toolbox->getFileModified($fileNameTwo));
+                }
+            }
+        }
+        return array($locations, $fileNames, $modified);
+    }
+    
+    // Return bundle ID
+    public function getBundleId($fileNames, $modified) {
+        $autoVersioning = intval($modified/(60*60*24));
+        $base = $this->yellow->system->get("coreServerBase");
+        return substru(md5($autoVersioning.$base.implode($fileNames)), 0, 10);
+    }
+    
+    // Check if bundle is required
+    public function isBundleRequired($fileName) {
+        list($dummy, $fileNames, $modified) = $this->getBundleInformation($fileName);
+        $idExpected = $idCurrent = $this->getBundleId($fileNames, $modified);
+        if (preg_match("/^bundle-(.*)\.min/", basename($fileName), $matches)) $idCurrent = $matches[1];
+        return $idExpected==$idCurrent && !defined("DEBUG");
+    }
+}
     
 /**
  * Abstract minifier class.
@@ -380,7 +422,7 @@ abstract class Minify
 
                 // we can safely ignore patterns for positions we've unset earlier,
                 // because we know these won't show up anymore
-                if (!isset($positions[$i])) {
+                if (array_key_exists($i, $positions) == false) {
                     continue;
                 }
 
@@ -878,10 +920,11 @@ class CSS extends Minify
              */
             $this->extractStrings();
             $this->stripComments();
+            $this->extractCalcs();
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
-            $css = $this->shortenHex($css);
+            $css = $this->shortenColors($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
             $css = $this->stripEmptyTags($css);
@@ -1052,12 +1095,16 @@ class CSS extends Minify
      *
      * @return string
      */
-    protected function shortenHex($content)
+    protected function shortenColors($content)
     {
-        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?=[; }])/i', '#$1$2$3', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?:([0-9a-z])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
 
-        // we can shorten some even more by replacing them with their color name
+        // remove alpha channel if it's pointless...
+        $content = preg_replace('/(?<=[: ])#([0-9a-z]{6})ff?(?=[; }])/i', '#$1', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-z]{3})f?(?=[; }])/i', '#$1', $content);
+
         $colors = array(
+            // we can shorten some even more by replacing them with their color name
             '#F0FFFF' => 'azure',
             '#F5F5DC' => 'beige',
             '#A52A2A' => 'brown',
@@ -1085,10 +1132,13 @@ class CSS extends Minify
             '#FF6347' => 'tomato',
             '#EE82EE' => 'violet',
             '#F5DEB3' => 'wheat',
+            // or the other way around
+            'WHITE' => '#fff',
+            'BLACK' => '#000',
         );
 
         return preg_replace_callback(
-            '/(?<=[: ])('.implode(array_keys($colors), '|').')(?=[; }])/i',
+            '/(?<=[: ])('.implode('|', array_keys($colors)).')(?=[; }])/i',
             function ($match) use ($colors) {
                 return $colors[strtoupper($match[0])];
             },
@@ -1130,11 +1180,7 @@ class CSS extends Minify
         // `5px - 0px` is valid, but `5px - 0` is not
         // `10px * 0` is valid (equates to 0), and so is `10 * 0px`, but
         // `10 * 0` is invalid
-        // best to just leave `calc()`s alone, even if they could be optimized
-        // (which is a whole other undertaking, where units & order of
-        // operations all need to be considered...)
-        $calcs = $this->findCalcs($content);
-        $content = str_replace($calcs, array_keys($calcs), $content);
+        // we've extracted calcs earlier, so we don't need to worry about this
 
         // reusable bits of code throughout these regexes:
         // before & after are used to make sure we don't match lose unintended
@@ -1171,9 +1217,6 @@ class CSS extends Minify
         $content = preg_replace('/flex:([0-9]+\s[0-9]+\s)0([;\}])/', 'flex:${1}0%${2}', $content);
         $content = preg_replace('/flex-basis:0([;\}])/', 'flex-basis:0%${1}', $content);
 
-        // restore `calc()` expressions
-        $content = str_replace(array_keys($calcs), $calcs, $content);
-
         return $content;
     }
 
@@ -1197,6 +1240,17 @@ class CSS extends Minify
      */
     protected function stripComments()
     {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $count = count($minifier->extracted);
+            $placeholder = '/*'.$count.'*/';
+            $minifier->extracted[$placeholder] = $match[0];
+
+            return $placeholder;
+        };
+        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
+
         $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
@@ -1219,8 +1273,8 @@ class CSS extends Minify
         // remove whitespace around meta characters
         // inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
         $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
-        $content = preg_replace('/([\[(:])\s+/', '$1', $content);
-        $content = preg_replace('/\s+([\]\)])/', '$1', $content);
+        $content = preg_replace('/([\[(:>\+])\s+/', '$1', $content);
+        $content = preg_replace('/\s+([\]\)>\+])/', '$1', $content);
         $content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
 
         // whitespace around + and - can only be stripped inside some pseudo-
@@ -1237,18 +1291,13 @@ class CSS extends Minify
     }
 
     /**
-     * Find all `calc()` occurrences.
-     *
-     * @param string $content The CSS content to find `calc()`s in.
-     *
-     * @return string[]
+     * Replace all `calc()` occurrences.
      */
-    protected function findCalcs($content)
+    protected function extractCalcs()
     {
-        $results = array();
-        preg_match_all('/calc(\(.+?)(?=$|;|calc\()/', $content, $matches, PREG_SET_ORDER);
-
-        foreach ($matches as $match) {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
             $length = strlen($match[1]);
             $expr = '';
             $opened = 0;
@@ -1262,11 +1311,18 @@ class CSS extends Minify
                     break;
                 }
             }
+            $rest = str_replace($expr, '', $match[1]);
+            $expr = trim(substr($expr, 1, -1));
 
-            $results['calc('.count($results).')'] = 'calc'.$expr;
-        }
+            $count = count($minifier->extracted);
+            $placeholder = 'calc('.$count.')';
+            $minifier->extracted[$placeholder] = 'calc('.$expr.')';
 
-        return $results;
+            return $placeholder.$rest;
+        };
+
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
     }
 
     /**
@@ -1482,11 +1538,21 @@ class JS extends Minify
      */
     protected function stripComments()
     {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $count = count($minifier->extracted);
+            $placeholder = '/*'.$count.'*/';
+            $minifier->extracted[$placeholder] = $match[0];
+
+            return $placeholder;
+        };
+        // multi-line comments
+        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
+        $this->registerPattern('/\/\*.*?\*\//s', '');
+
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
-
-        // multi-line comments
-        $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
     /**
@@ -1525,7 +1591,7 @@ class JS extends Minify
         // closing the regex)
         // then also ignore bare `/` inside `[]`, where they don't need to be
         // escaped: anything inside `[]` can be ignored safely
-        $pattern = '\\/(?:[^\\[\\/\\\\\n\r]+|(?:\\\\.)+|(?:\\[(?:[^\\]\\\\\n\r]+|(?:\\\\.)+)+\\])+)++\\/[gimuy]*';
+        $pattern = '\\/(?!\*)(?:[^\\[\\/\\\\\n\r]++|(?:\\\\.)++|(?:\\[(?:[^\\]\\\\\n\r]++|(?:\\\\.)++)++\\])++)++\\/[gimuy]*';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
@@ -1622,7 +1688,9 @@ class JS extends Minify
             array(
                 '/('.implode('|', $operatorsBefore).')\s+/',
                 '/\s+('.implode('|', $operatorsAfter).')/',
-            ), '\\1', $content
+            ),
+            '\\1',
+            $content
         );
 
         // make sure + and - can't be mistaken for, or joined into ++ and --
@@ -1630,7 +1698,9 @@ class JS extends Minify
             array(
                 '/(?<![\+\-])\s*([\+\-])(?![\+\-])/',
                 '/(?<![\+\-])([\+\-])\s*(?![\+\-])/',
-            ), '\\1', $content
+            ),
+            '\\1',
+            $content
         );
 
         // collapse whitespace around reserved words into single space
@@ -1894,14 +1964,12 @@ class Converter implements ConverterInterface {
     }
 }
 
-// Minify extensions
-// Copyright (c) 2013-2019 Datenstrom
+// Bundle extension, Copyright Datenstrom, License GPLv2
 
 class MinifyCss extends CSS { }
 
 class MinifyJavaScript extends JS {
 
-    // Use hardcoded keywords and operators
     public function __construct() {
         $this->keywordsReserved = array("do", "if", "in", "for", "let", "new", "try", "var", "case", "else", "enum", "eval", "null", "this", "true", "void", "with", "break", "catch", "class", "const", "false", "super", "throw", "while", "yield", "delete", "export", "import", "public", "return", "static", "switch", "typeof", "default", "extends", "finally", "package", "private", "continue", "debugger", "function", "arguments", "interface", "protected", "implements", "instanceof", "abstract", "boolean", "byte", "char", "double", "final", "float", "goto", "int", "long", "native", "short", "synchronized", "throws", "transient", "volatile");
         $this->keywordsBefore = array("do", "in", "let", "new", "var", "case", "else", "enum", "void", "with", "class", "const", "yield", "delete", "export", "import", "public", "static", "typeof", "extends", "package", "private", "function", "protected", "implements", "instanceof");
@@ -1910,6 +1978,11 @@ class MinifyJavaScript extends JS {
         $this->operatorsBefore = array("+", "-", "*", "/", "%", "=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", ">>>=", "&=", "^=", "|=", "&", "|", "^", "~", "<<", ">>", ">>>", "==", "===", "!=", "!==", ">", "<", ">=", "<=", "&&", "||", "!", ".", "[", "?", ":", ",", ";", "(", "{");
         $this->operatorsAfter = array("+", "-", "*", "/", "%", "=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", ">>>=", "&=", "^=", "|=", "&", "|", "^", "<<", ">>", ">>>", "==", "===", "!=", "!==", ">", "<", ">=", "<=", "&&", "||", ".", "[", "]", "?", ":", ",", ";", "(", ")", "}");
     }
+    
+    // Minify data, add semicolon as separator between multiple files
+    public function execute($path = null) {
+        return parent::execute($path).";";
+    }
 }
 
 class MinifyBasic extends Minify {
@@ -1917,13 +1990,12 @@ class MinifyBasic extends Minify {
     // Minify data, remove only comments and empty lines
     public function execute($path = null) {
         $content = "";
-        $this->extractStrings();
+        $this->extractStrings("\'\"\`");
+        $this->registerPattern("/\/\*.*?\*\//s", "");
+        $this->registerPattern("/\/\/.*?[\r\n]+/", "");
+        $this->registerPattern("/[\r\n]+/", "");
         foreach ($this->data as $source => $data) {
-            $data = $this->replace($data);
-            $data = preg_replace("/\/\*.*?\*\//s", "", $data);
-            $data = preg_replace("/\/\/.*?[\r\n]+/", "", $data);
-            $data = preg_replace("/[\r\n]+/", "\n", $data);
-            $content .= trim($data);
+            $content .= $this->replace($data);
         }
         return $this->restoreExtractedData($content);
     }

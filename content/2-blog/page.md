@@ -2,6 +2,6 @@
 Title: Blog
 TitleNavigation : 🧠 Blog
 Description: Blog
-Layout: blogpages
+Layout: blog-start
 LayoutNew: blog
 ---

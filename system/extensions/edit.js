@@ -1,33 +1,36 @@
-// Edit extension, https://github.com/datenstrom/yellow-extensions/tree/master/features/edit
-// Copyright (c) 2013-2019 Datenstrom, https://datenstrom.se
-// This file may be used and distributed under the terms of the public license.
+// Edit extension, https://github.com/datenstrom/yellow-extensions/tree/master/source/edit
 
 var yellow = {
-    onLoad: function() { yellow.edit.load(); },
+    onLoad: function(e) { yellow.edit.load(e); },
     onKeydown: function(e) { yellow.edit.keydown(e); },
     onDrag: function(e) { yellow.edit.drag(e); },
     onDrop: function(e) { yellow.edit.drop(e); },
     onClick: function(e) { yellow.edit.click(e); },
     onClickAction: function(e) { yellow.edit.clickAction(e); },
+    onPageShow: function(e) { yellow.edit.pageShow(e); },
     onUpdatePane: function() { yellow.edit.updatePane(yellow.edit.paneId, yellow.edit.paneAction, yellow.edit.paneStatus); },
     onResizePane: function() { yellow.edit.resizePane(yellow.edit.paneId, yellow.edit.paneAction, yellow.edit.paneStatus); },
-    action: function(action, status, args) { yellow.edit.processAction(action, status, args); }
+    action: function(action, status, arguments) { yellow.edit.processAction(action, status, arguments); }
 };
 
 yellow.edit = {
-    paneId: 0,          //visible pane ID
-    paneAction: 0,      //current pane action
-    paneStatus: 0,      //current pane status
-    popupId: 0,         //visible popup ID
-    intervalId: 0,      //timer interval ID
+    paneId: 0,          // visible pane ID
+    paneAction: 0,      // current pane action
+    paneStatus: 0,      // current pane status
+    popupId: 0,         // visible popup ID
+    intervalId: 0,      // timer interval ID
 
     // Handle initialisation
-    load: function() {
+    load: function(e) {
         var body = document.getElementsByTagName("body")[0];
         if (body && body.firstChild && !document.getElementById("yellow-bar")) {
             this.createBar("yellow-bar");
             this.processAction(yellow.page.action, yellow.page.status);
             clearInterval(this.intervalId);
+        }
+        if (e.type=="DOMContentLoaded") {
+            var page = document.getElementsByClassName("page")[0];
+            if (page) this.bindActions(page);
         }
     },
     
@@ -66,7 +69,14 @@ yellow.edit = {
         for (; element; element=element.parentNode) {
             if (element.tagName=="A") break;
         }
-        this.processAction(element.getAttribute("data-action"), element.getAttribute("data-status"), element.getAttribute("data-args"));
+        this.processAction(element.getAttribute("data-action"), element.getAttribute("data-status"), element.getAttribute("data-arguments"));
+    },
+    
+    // Handle page cache
+    pageShow: function(e) {
+        if (e.persisted && yellow.user.email && !this.getCookie("csrftoken")) {
+            window.location.reload();
+        }
     },
     
     // Create bar
@@ -77,21 +87,24 @@ yellow.edit = {
         if (barId=="yellow-bar") {
             yellow.toolbox.addEvent(document, "click", yellow.onClick);
             yellow.toolbox.addEvent(document, "keydown", yellow.onKeydown);
+            yellow.toolbox.addEvent(window, "pageshow", yellow.onPageShow);
             yellow.toolbox.addEvent(window, "resize", yellow.onResizePane);
         }
         var elementDiv = document.createElement("div");
         elementDiv.setAttribute("id", barId+"-content");
-        if (yellow.system.userName) {
+        if (yellow.user.name) {
             elementDiv.innerHTML =
                 "<div class=\"yellow-bar-left\">"+
-                "<a href=\"#\" id=\"yellow-pane-edit-bar\" data-action=\"edit\" aria-expanded=\"false\">"+this.getText("Edit")+"</a>"+
+                this.getRawDataPaneAction("edit")+
                 "</div>"+
                 "<div class=\"yellow-bar-right\">"+
-                "<a href=\"#\" id=\"yellow-pane-create-bar\" data-action=\"create\" aria-expanded=\"false\">"+this.getText("Create")+"</a>"+
-                "<a href=\"#\" id=\"yellow-pane-delete-bar\" data-action=\"delete\" aria-expanded=\"false\">"+this.getText("Delete")+"</a>"+
-                "<a href=\"#\" id=\"yellow-pane-menu-bar\" data-action=\"menu\" aria-expanded=\"false\">"+yellow.toolbox.encodeHtml(yellow.system.userName)+"</a>"+
+                this.getRawDataPaneAction("create")+
+                this.getRawDataPaneAction("delete")+
+                this.getRawDataPaneAction("menu", yellow.user.name, true)+
                 "</div>"+
                 "<div class=\"yellow-bar-banner\"></div>";
+        } else {
+            elementDiv.innerHTML = "&nbsp;";
         }
         elementBar.appendChild(elementDiv);
         yellow.toolbox.insertBefore(elementBar, document.getElementsByTagName("body")[0].firstChild);
@@ -141,7 +154,7 @@ yellow.edit = {
             case "yellow-pane-login":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1>"+this.getText("LoginTitle")+"</h1></div>"+
                 "<div class=\"yellow-fields\">"+
                 "<input type=\"hidden\" name=\"action\" value=\"login\" />"+
@@ -155,7 +168,7 @@ yellow.edit = {
             case "yellow-pane-signup":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1>"+this.getText("SignupTitle")+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-signup-status\" class=\""+paneStatus+"\">"+this.getText("SignupStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-fields\">"+
@@ -171,7 +184,7 @@ yellow.edit = {
             case "yellow-pane-forgot":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1>"+this.getText("ForgotTitle")+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-forgot-status\" class=\""+paneStatus+"\">"+this.getText("ForgotStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-fields\">"+
@@ -184,7 +197,7 @@ yellow.edit = {
             case "yellow-pane-recover":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1>"+this.getText("RecoverTitle")+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-recover-status\" class=\""+paneStatus+"\">"+this.getText("RecoverStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-fields\">"+
@@ -196,7 +209,7 @@ yellow.edit = {
             case "yellow-pane-quit":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1>"+this.getText("QuitTitle")+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-quit-status\" class=\""+paneStatus+"\">"+this.getText("QuitStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-fields\">"+
@@ -210,11 +223,11 @@ yellow.edit = {
             case "yellow-pane-account":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1 id=\"yellow-pane-account-title\">"+this.getText("AccountTitle")+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-account-status\" class=\""+paneStatus+"\">"+this.getText("AccountStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-settings\">"+
-                "<div id=\"yellow-pane-account-settings-actions\" class=\"yellow-settings-left\"><p>"+this.getRawDataActions(paneAction)+"</p></div>"+
+                "<div id=\"yellow-pane-account-settings-actions\" class=\"yellow-settings-left\"><p>"+this.getRawDataSettingsActions(paneAction)+"</p></div>"+
                 "<div id=\"yellow-pane-account-settings-separator\" class=\"yellow-settings-left yellow-settings-separator\">&nbsp;</div>"+
                 "<div id=\"yellow-pane-account-settings-fields\" class=\"yellow-settings-right yellow-fields\">"+
                 "<input type=\"hidden\" name=\"action\" value=\"account\" />"+
@@ -230,22 +243,22 @@ yellow.edit = {
                 "</div>"+
                 "</form>";
                 break;
-            case "yellow-pane-system":
+            case "yellow-pane-configure":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
-                "<div class=\"yellow-title\"><h1 id=\"yellow-pane-system-title\">"+this.getText("SystemTitle")+"</h1></div>"+
-                "<div class=\"yellow-status\"><p id=\"yellow-pane-system-status\" class=\""+paneStatus+"\">"+this.getText("SystemStatus", "", paneStatus)+"</p></div>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
+                "<div class=\"yellow-title\"><h1 id=\"yellow-pane-configure-title\">"+this.getText("ConfigureTitle")+"</h1></div>"+
+                "<div class=\"yellow-status\"><p id=\"yellow-pane-configure-status\" class=\""+paneStatus+"\">"+this.getText("ConfigureStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-settings\">"+
-                "<div id=\"yellow-pane-system-settings-actions\" class=\"yellow-settings-left\"><p>"+this.getRawDataActions(paneAction)+"</p></div>"+
-                "<div id=\"yellow-pane-system-settings-separator\" class=\"yellow-settings-left yellow-settings-separator\">&nbsp;</div>"+
-                "<div id=\"yellow-pane-system-settings-fields\" class=\"yellow-settings-right yellow-fields\">"+
-                "<input type=\"hidden\" name=\"action\" value=\"system\" />"+
+                "<div id=\"yellow-pane-configure-settings-actions\" class=\"yellow-settings-left\"><p>"+this.getRawDataSettingsActions(paneAction)+"</p></div>"+
+                "<div id=\"yellow-pane-configure-settings-separator\" class=\"yellow-settings-left yellow-settings-separator\">&nbsp;</div>"+
+                "<div id=\"yellow-pane-configure-settings-fields\" class=\"yellow-settings-right yellow-fields\">"+
+                "<input type=\"hidden\" name=\"action\" value=\"configure\" />"+
                 "<input type=\"hidden\" name=\"csrftoken\" value=\""+yellow.toolbox.encodeHtml(this.getCookie("csrftoken"))+"\" />"+
-                "<p><label for=\"yellow-pane-system-sitename\">"+this.getText("SystemSitename")+"</label><br /><input class=\"yellow-form-control\" name=\"sitename\" id=\"yellow-pane-system-sitename\" maxlength=\"64\" value=\""+yellow.toolbox.encodeHtml(this.getRequest("sitename"))+"\" /></p>"+
-                "<p><label for=\"yellow-pane-system-author\">"+this.getText("SystemAuthor")+"</label><br /><input class=\"yellow-form-control\" name=\"author\" id=\"yellow-pane-system-author\" maxlength=\"64\" value=\""+yellow.toolbox.encodeHtml(this.getRequest("author"))+"\" /></p>"+
-                "<p><label for=\"yellow-pane-system-email\">"+this.getText("SystemEmail")+"</label><br /><input class=\"yellow-form-control\" name=\"email\" id=\"yellow-pane-system-email\" maxlength=\"64\" value=\""+yellow.toolbox.encodeHtml(this.getRequest("email"))+"\" /></p>"+
-                "<p>"+this.getText("SystemInformation")+"</p>"+
+                "<p><label for=\"yellow-pane-configure-sitename\">"+this.getText("ConfigureSitename")+"</label><br /><input class=\"yellow-form-control\" name=\"sitename\" id=\"yellow-pane-configure-sitename\" maxlength=\"64\" value=\""+yellow.toolbox.encodeHtml(this.getRequest("sitename"))+"\" /></p>"+
+                "<p><label for=\"yellow-pane-configure-author\">"+this.getText("ConfigureAuthor")+"</label><br /><input class=\"yellow-form-control\" name=\"author\" id=\"yellow-pane-configure-author\" maxlength=\"64\" value=\""+yellow.toolbox.encodeHtml(this.getRequest("author"))+"\" /></p>"+
+                "<p><label for=\"yellow-pane-configure-email\">"+this.getText("ConfigureEmail")+"</label><br /><input class=\"yellow-form-control\" name=\"email\" id=\"yellow-pane-configure-email\" maxlength=\"64\" value=\""+yellow.toolbox.encodeHtml(this.getRequest("email"))+"\" /></p>"+
+                "<p>"+this.getText("ConfigureInformation")+"</p>"+
                 "<p><input class=\"yellow-btn\" type=\"submit\" value=\""+this.getText("ChangeButton")+"\" /></p>"+
                 "</div>"+
                 "<div class=\"yellow-settings yellow-settings-banner\"></div>"+
@@ -255,12 +268,12 @@ yellow.edit = {
             case "yellow-pane-update":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
-                "<div class=\"yellow-title\"><h1 id=\"yellow-pane-update-title\">"+yellow.toolbox.encodeHtml(yellow.system.serverVersion)+"</h1></div>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
+                "<div class=\"yellow-title\"><h1 id=\"yellow-pane-update-title\">"+yellow.toolbox.encodeHtml(yellow.system.coreProductRelease)+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-update-status\" class=\""+paneStatus+"\">"+this.getText("UpdateStatus", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-output\" id=\"yellow-pane-update-output\">"+yellow.page.rawDataOutput+"</div>"+
                 "<div class=\"yellow-buttons\" id=\"yellow-pane-update-buttons\">"+
-                "<p><a href=\"#\" class=\"yellow-btn\" data-action=\"close\">"+this.getText("OkButton")+"</a></p>"+
+                "<p><a href=\"#\" id=\"yellow-pane-update-submit\" class=\"yellow-btn\" data-action=\"close\">"+this.getText("OkButton")+"</a></p>"+
                 "</div>"+
                 "</form>";
                 break;
@@ -315,16 +328,16 @@ yellow.edit = {
             case "yellow-pane-menu":
                 elementDiv.innerHTML =
                 "<ul class=\"yellow-dropdown\">"+
-                "<li><span>"+yellow.toolbox.encodeHtml(yellow.system.userEmail)+"</span></li>"+
+                "<li><span>"+yellow.toolbox.encodeHtml(yellow.user.email)+"</span></li>"+
                 "<li><a href=\"#\" data-action=\"settings\">"+this.getText("MenuSettings")+"</a></li>" +
                 "<li><a href=\"#\" data-action=\"help\">"+this.getText("MenuHelp")+"</a></li>" +
-                "<li><a href=\"#\" data-action=\"submit\" data-args=\"action:logout\">"+this.getText("MenuLogout")+"</a></li>"+
+                "<li><a href=\"#\" data-action=\"submit\" data-arguments=\"action:logout\">"+this.getText("MenuLogout")+"</a></li>"+
                 "</ul>";
                 break;
             case "yellow-pane-information":
                 elementDiv.innerHTML =
                 "<form method=\"post\">"+
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-title\"><h1 id=\"yellow-pane-information-title\">"+this.getText(paneAction+"Title")+"</h1></div>"+
                 "<div class=\"yellow-status\"><p id=\"yellow-pane-information-status\" class=\""+paneStatus+"\">"+this.getText(paneAction+"Status", "", paneStatus)+"</p></div>"+
                 "<div class=\"yellow-buttons\" id=\"yellow-pane-information-buttons\">"+
@@ -333,7 +346,7 @@ yellow.edit = {
                 "</form>";
                 break;
             default: elementDiv.innerHTML =
-                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\"></i></a>"+
+                "<a href=\"#\" class=\"yellow-close\" data-action=\"close\"><i class=\"yellow-icon yellow-icon-close\" aria-label=\""+this.getText("CancelButton")+"\"></i></a>"+
                 "<div class=\"yellow-error\">Pane '"+paneId+"' was not found. Oh no...</div>";
         }
         elementPane.appendChild(elementDiv);
@@ -361,28 +374,32 @@ yellow.edit = {
                 }
                 if (paneStatus=="none") {
                     document.getElementById("yellow-pane-account-status").innerHTML = this.getText("AccountStatusNone");
-                    document.getElementById("yellow-pane-account-name").value = yellow.system.userName;
-                    document.getElementById("yellow-pane-account-email").value = yellow.system.userEmail;
+                    document.getElementById("yellow-pane-account-name").value = yellow.user.name;
+                    document.getElementById("yellow-pane-account-email").value = yellow.user.email;
                     document.getElementById("yellow-pane-account-password").value = "";
-                    document.getElementById("yellow-pane-account-"+yellow.system.userLanguage).checked = true;
+                    if (document.getElementById("yellow-pane-account-"+yellow.user.language)) {
+                        document.getElementById("yellow-pane-account-"+yellow.user.language).checked = true;
+                    }
                 }
                 break;
-            case "yellow-pane-system":
+            case "yellow-pane-configure":
                 if (paneStatus=="none") {
-                    document.getElementById("yellow-pane-system-status").innerHTML = this.getText("SystemStatusNone");
-                    document.getElementById("yellow-pane-system-sitename").value = yellow.system.sitename;
-                    document.getElementById("yellow-pane-system-author").value = yellow.system.author;
-                    document.getElementById("yellow-pane-system-email").value = yellow.system.email;
+                    document.getElementById("yellow-pane-configure-status").innerHTML = this.getText("ConfigureStatusNone");
+                    document.getElementById("yellow-pane-configure-sitename").value = yellow.system.sitename;
+                    document.getElementById("yellow-pane-configure-author").value = yellow.system.author;
+                    document.getElementById("yellow-pane-configure-email").value = yellow.system.email;
                 }
                 break;
             case "yellow-pane-update":
-                if (paneStatus=="none" && this.isUserAdministrator()) {
+                if (paneStatus=="none") {
                     document.getElementById("yellow-pane-update-status").innerHTML = this.getText("UpdateStatusCheck");
                     document.getElementById("yellow-pane-update-output").innerHTML = "";
                     setTimeout("yellow.action('submit', '', 'action:update/option:check/');", 500);
                 }
-                if (paneStatus=="updates" && this.isUserAdministrator()) {
-                    document.getElementById("yellow-pane-update-status").innerHTML = "<a href=\"#\" data-action=\"submit\" data-args=\"action:update\">"+this.getText("UpdateStatusUpdates")+"</a>";
+                if (paneStatus=="updates") {
+                    document.getElementById(paneId+"-submit").innerHTML = this.getText("UpdateButton");
+                    document.getElementById(paneId+"-submit").setAttribute("data-action", "submit");
+                    document.getElementById(paneId+"-submit").setAttribute("data-arguments", "action:update");
                 }
                 break;
             case "yellow-pane-create":
@@ -401,9 +418,13 @@ yellow.edit = {
                         yellow.toolbox.setVisible(document.getElementById(paneId+"-toolbar-title"), false);
                         this.updateToolbar(0, "yellow-toolbar-checked");
                     }
-                    if (yellow.system.userRestriction || (yellow.page.rawDataReadonly && paneId!="yellow-pane-create")) {
-                        yellow.toolbox.setVisible(document.getElementById(paneId+"-submit"), false);
+                    if (!this.isUserAccess(paneAction, yellow.page.location) || (yellow.page.rawDataReadonly && paneId!="yellow-pane-create")) {
                         document.getElementById(paneId+"-text").readOnly = true;
+                        var elements = document.getElementsByClassName("yellow-toolbar-btn-icon");
+                        for (var i=0, l=elements.length; i<l; i++) {
+                            yellow.toolbox.addClass(elements[i], "yellow-toolbar-disabled");
+                        }
+                        yellow.toolbox.setVisible(document.getElementById(paneId+"-submit"), false);
                     }
                 }
                 if (!document.getElementById(paneId+"-text").readOnly) {
@@ -412,7 +433,7 @@ yellow.edit = {
                     if (document.getElementById(paneId+"-submit").className != className) {
                         document.getElementById(paneId+"-submit").className = className;
                         document.getElementById(paneId+"-submit").innerHTML = this.getText(paneAction+"Button");
-                        document.getElementById(paneId+"-submit").setAttribute("data-args", "action:"+paneAction);
+                        document.getElementById(paneId+"-submit").setAttribute("data-arguments", "action:"+paneAction);
                         this.resizePane(paneId, paneAction, paneStatus);
                     }
                 }
@@ -430,7 +451,7 @@ yellow.edit = {
         var paneHeight = yellow.toolbox.getWindowHeight() - paneTop - Math.min(yellow.toolbox.getOuterHeight(elementBar) + 10, (yellow.toolbox.getWindowWidth()-yellow.toolbox.getOuterWidth(elementBar))/2);
         switch (paneId) {
             case "yellow-pane-account":
-            case "yellow-pane-system":
+            case "yellow-pane-configure":
                 yellow.toolbox.setOuterLeft(document.getElementById(paneId), paneLeft);
                 yellow.toolbox.setOuterTop(document.getElementById(paneId), paneTop);
                 yellow.toolbox.setOuterWidth(document.getElementById(paneId), paneWidth);
@@ -528,10 +549,10 @@ yellow.edit = {
     },
     
     // Process action
-    processAction: function(action, status, args) {
+    processAction: function(action, status, arguments) {
         action = action ? action : "none";
         status = status ? status : "none";
-        args = args ? args : "none";
+        arguments = arguments ? arguments : "none";
         if (action!="none") {
             if (yellow.system.debug) console.log("yellow.edit.processAction action:"+action+" status:"+status);
             var paneId = (status!="next" && status!="done") ? "yellow-pane-"+action : "yellow-pane-information";
@@ -548,23 +569,24 @@ yellow.edit = {
                 case "quit":        this.showPane(paneId, action, status); break;
                 case "remove":      this.showPane(paneId, action, status); break;
                 case "account":     this.showPane(paneId, action, status); break;
-                case "system":      this.showPane(paneId, action, status); break;
+                case "configure":   this.showPane(paneId, action, status); break;
                 case "update":      this.showPane(paneId, action, status); break;
                 case "create":      this.showPane(paneId, action, status, true); break;
                 case "edit":        this.showPane(paneId, action, status, true); break;
                 case "delete":      this.showPane(paneId, action, status, true); break;
                 case "menu":        this.showPane(paneId, action, status); break;
-                case "close":       this.hidePane(this.paneId); break;
-                case "toolbar":     this.processToolbar(status, args); break;
-                case "settings":    this.processSettings(args); break;
-                case "submit":      this.processSubmit(args); break;
+                case "toolbar":     this.processToolbar(status, arguments); break;
+                case "settings":    this.processSettings(arguments); break;
+                case "submit":      this.processSubmit(arguments); break;
+                case "restore":     this.processSubmit("action:"+action); break;
                 case "help":        this.processHelp(); break;
+                case "close":       this.processClose(); break;
             }
         }
     },
     
     // Process toolbar
-    processToolbar: function(status, args) {
+    processToolbar: function(status, arguments) {
         if (yellow.system.debug) console.log("yellow.edit.processToolbar status:"+status);
         var elementText = document.getElementById(this.paneId+"-text");
         var elementPreview = document.getElementById(this.paneId+"-preview");
@@ -586,21 +608,22 @@ yellow.edit = {
                 case "ol":              yellow.editor.setMarkdown(elementText, "1. ", "insert-multiline-block", true); break;
                 case "tl":              yellow.editor.setMarkdown(elementText, "- [ ] ", "insert-multiline-block", true); break;
                 case "link":            yellow.editor.setMarkdown(elementText, "[link](url)", "insert", false, yellow.editor.getMarkdownLink); break;
-                case "text":            yellow.editor.setMarkdown(elementText, args, "insert"); break;
-                case "draft":           yellow.editor.setMetaData(elementText, "status", "draft", true); break;
+                case "text":            yellow.editor.setMarkdown(elementText, arguments, "insert"); break;
+                case "status":          yellow.editor.setMetaData(elementText, "status", true); break;
                 case "file":            this.showFileDialog(); break;
                 case "undo":            yellow.editor.undo(); break;
                 case "redo":            yellow.editor.redo(); break;
             }
+            if (this.isExpandable(status)) {
+                this.showPopup("yellow-popup-"+status, status);
+            } else {
+                this.hidePopup(this.popupId);
+            }
         }
-        if (status=="preview" && !elementText.readOnly) this.showPreview(elementText, elementPreview);
-        if (status=="save" && !elementText.readOnly && this.paneAction!="delete") this.processSubmit("action:"+this.paneAction);
-        if (status=="help") window.open(this.getText("HelpUrl", "yellow"), "_blank");
-        if (status=="markdown") window.open(this.getText("MarkdownUrl", "yellow"), "_blank");
-        if (this.isExpandable(status)) {
-            this.showPopup("yellow-popup-"+status, status);
-        } else {
-            this.hidePopup(this.popupId);
+        if (!elementText.readOnly) {
+            if (status=="preview") this.showPreview(elementText, elementPreview);
+            if (status=="save" && this.paneAction!="delete") this.processSubmit("action:"+this.paneAction);
+            if (status=="help") window.open(this.getText("YellowHelpUrl"), "_blank");
         }
     },
     
@@ -639,15 +662,15 @@ yellow.edit = {
     },
     
     // Process settings
-    processSettings: function(args) {
-        var action = args!="none" ? args : "account";
+    processSettings: function(arguments) {
+        var action = arguments!="none" ? arguments : "account";
         if (action!=this.paneAction && action!="settings") this.processAction(action);
     },
     
     // Process submit
-    processSubmit: function(args) {
+    processSubmit: function(arguments) {
         var settings = { "action":"none", "csrftoken":this.getCookie("csrftoken") };
-        var tokens = args.split("/");
+        var tokens = arguments.split("/");
         for (var i=0; i<tokens.length; i++) {
             var pair = tokens[i].split(/[:=]/);
             if (!pair[0] || !pair[1]) continue;
@@ -664,7 +687,13 @@ yellow.edit = {
     // Process help
     processHelp: function() {
         this.hidePane(this.paneId);
-        window.open(this.getText("HelpUrl", "yellow"), "_self");
+        window.open(this.getText("YellowHelpUrl"), "_self");
+    },
+    
+    // Process close
+    processClose: function() {
+        this.hidePane(this.paneId);
+        if (yellow.page.action=="login") window.open(yellow.page.pageReadUrl, "_self");
     },
     
     // Create popup
@@ -712,7 +741,7 @@ yellow.edit = {
                     for (var i=0; i<tokens.length; i++) {
                         var token = tokens[i].replace(/[\:]/g,"");
                         var className = token.replace("+1", "plus1").replace("-1", "minus1").replace(/_/g, "-");
-                        rawDataEmojis += "<li><a href=\"#\" id=\"yellow-popup-list-"+yellow.toolbox.encodeHtml(token)+"\" data-action=\"toolbar\" data-status=\"text\" data-args=\":"+yellow.toolbox.encodeHtml(token)+":\"><i class=\"ea ea-"+yellow.toolbox.encodeHtml(className)+"\"></i></a></li>";
+                        rawDataEmojis += "<li><a href=\"#\" id=\"yellow-popup-list-"+yellow.toolbox.encodeHtml(token)+"\" data-action=\"toolbar\" data-status=\"text\" data-arguments=\":"+yellow.toolbox.encodeHtml(token)+":\"><i class=\"ea ea-"+yellow.toolbox.encodeHtml(className)+"\"></i></a></li>";
                     }
                 }
                 elementDiv.innerHTML = "<ul class=\"yellow-dropdown yellow-dropdown-menu\">"+rawDataEmojis+"</ul>";
@@ -723,7 +752,7 @@ yellow.edit = {
                     var tokens = yellow.system.fontawesomeToolbarButtons.split(" ");
                     for (var i=0; i<tokens.length; i++) {
                         var token = tokens[i].replace(/[\:]/g,"");
-                        rawDataIcons += "<li><a href=\"#\" id=\"yellow-popup-list-"+yellow.toolbox.encodeHtml(token)+"\" data-action=\"toolbar\" data-status=\"text\" data-args=\":"+yellow.toolbox.encodeHtml(token)+":\"><i class=\"fa "+yellow.toolbox.encodeHtml(token)+"\"></i></a></li>";
+                        rawDataIcons += "<li><a href=\"#\" id=\"yellow-popup-list-"+yellow.toolbox.encodeHtml(token)+"\" data-action=\"toolbar\" data-status=\"text\" data-arguments=\":"+yellow.toolbox.encodeHtml(token)+":\"><i class=\"fa "+yellow.toolbox.encodeHtml(token)+"\"></i></a></li>";
                     }
                 }
                 elementDiv.innerHTML = "<ul class=\"yellow-dropdown yellow-dropdown-menu\">"+rawDataIcons+"</ul>";
@@ -791,7 +820,7 @@ yellow.edit = {
         if (showPreview) {
             this.updateToolbar("preview", "yellow-toolbar-checked");
             elementPreview.innerHTML = responseText;
-            dispatchEvent(new Event("load"));
+            dispatchEvent(new Event("DOMContentLoaded"));
         } else {
             this.updateToolbar(0, "yellow-toolbar-checked");
             elementText.focus();
@@ -811,20 +840,29 @@ yellow.edit = {
     
     // Upload file
     uploadFile: function(elementText, file) {
-        var extension = (file.name.lastIndexOf(".")!=-1 ? file.name.substring(file.name.lastIndexOf("."), file.name.length) : "").toLowerCase();
-        var extensions = yellow.system.editUploadExtensions.split(/\s*,\s*/);
-        if (file.size<=yellow.system.serverFileSizeMax && extensions.indexOf(extension)!=-1) {
-            var text = this.getText("UploadProgress")+"\u200b";
-            yellow.editor.setMarkdown(elementText, text, "insert");
-            var thisObject = this;
-            var formData = new FormData();
-            formData.append("action", "upload");
-            formData.append("csrftoken", this.getCookie("csrftoken"));
-            formData.append("file", file);
-            var request = new XMLHttpRequest();
-            request.open("POST", window.location.pathname, true);
-            request.onload = function() { if (this.status==200) { thisObject.uploadFileDone.call(thisObject, elementText, this.responseText); } else { thisObject.uploadFileError.call(thisObject, elementText, this.responseText); } };
-            request.send(formData);
+        if (this.isUserAccess("upload", yellow.page.location)) {
+            var extension = (file.name.lastIndexOf(".")!=-1 ? file.name.substring(file.name.lastIndexOf("."), file.name.length) : "").toLowerCase();
+            var extensions = yellow.system.editUploadExtensions.split(/\s*,\s*/);
+            if (file.size<=yellow.system.coreFileSizeMax && extensions.indexOf(extension)!=-1) {
+                var text = "["+this.getText("UploadProgress")+"]\u200b";
+                yellow.editor.setMarkdown(elementText, text, "insert");
+                var thisObject = this;
+                var formData = new FormData();
+                formData.append("action", "upload");
+                formData.append("csrftoken", this.getCookie("csrftoken"));
+                formData.append("file", file);
+                var request = new XMLHttpRequest();
+                request.open("POST", window.location.pathname, true);
+                request.onload = function() { if (this.status==200) { thisObject.uploadFileDone.call(thisObject, elementText, this.responseText); } else { thisObject.uploadFileError.call(thisObject, elementText, this.responseText); } };
+                request.send(formData);
+            } else {
+                var textError = extensions.indexOf(extension)!=-1 ? "file too big!" : "file format not supported!";
+                var textNew = "[Can't upload file '"+file.name+"', "+textError+"]";
+                yellow.editor.setMarkdown(elementText, textNew, "insert");
+            }
+        } else {
+            var textNew = "[Can't upload file '"+file.name+"', access is restricted!]";
+            yellow.editor.setMarkdown(elementText, textNew, "insert");
         }
     },
     
@@ -832,10 +870,10 @@ yellow.edit = {
     uploadFileDone: function(elementText, responseText) {
         var result = JSON.parse(responseText);
         if (result) {
-            var textOld = this.getText("UploadProgress")+"\u200b";
+            var textOld = "["+this.getText("UploadProgress")+"]\u200b";
             var textNew;
-            if (result.location.substring(0, yellow.system.imageLocation.length)==yellow.system.imageLocation) {
-                textNew = "[image "+result.location.substring(yellow.system.imageLocation.length)+"]";
+            if (result.location.substring(0, yellow.system.coreImageLocation.length)==yellow.system.coreImageLocation) {
+                textNew = "[image "+result.location.substring(yellow.system.coreImageLocation.length)+"]";
             } else {
                 textNew = "[link]("+result.location+")";
             }
@@ -847,7 +885,7 @@ yellow.edit = {
     uploadFileError: function(elementText, responseText) {
         var result = JSON.parse(responseText);
         if (result) {
-            var textOld = this.getText("UploadProgress")+"\u200b";
+            var textOld = "["+this.getText("UploadProgress")+"]\u200b";
             var textNew = "["+result.error+"]";
             yellow.editor.replace(elementText, textOld, textNew);
         }
@@ -857,6 +895,9 @@ yellow.edit = {
     bindActions: function(element) {
         var elements = element.getElementsByTagName("a");
         for (var i=0, l=elements.length; i<l; i++) {
+            if (elements[i].getAttribute("href") && elements[i].getAttribute("href").substring(0, 13)=="#data-action-") {
+                elements[i].setAttribute("data-action", elements[i].getAttribute("href").substring(13));
+            }
             if (elements[i].getAttribute("data-action")) elements[i].onclick = yellow.onClickAction;
             if (elements[i].getAttribute("data-action")=="toolbar") elements[i].onmousedown = function(e) { e.preventDefault(); };
         }
@@ -868,19 +909,29 @@ yellow.edit = {
         var paneAction = paneId.substring(panePrefix.length);
         if (paneAction=="edit") {
             if (document.getElementById("yellow-pane-edit-text").value.length==0) paneAction = "delete";
-            if (yellow.page.statusCode==434) paneAction = "create";
+            if (yellow.page.statusCode==434 || yellow.page.statusCode==435) paneAction = "create";
         }
         return paneAction;
     },
     
-    // Return raw data for actions
-    getRawDataActions: function(paneAction) {
+    // Return raw data for pane action
+    getRawDataPaneAction: function(paneAction, text, important) {
+        var rawDataAction = "";
+        if (this.isUserAccess(paneAction) || important) {
+            if (!text) text = this.getText(paneAction);
+            rawDataAction = "<a href=\"#\" id=\"yellow-pane-"+paneAction+"-bar\" data-action=\""+paneAction+"\" aria-expanded=\"false\">"+yellow.toolbox.encodeHtml(text)+"</a>";
+        }
+        return rawDataAction;
+    },
+    
+    // Return raw data for settings actions
+    getRawDataSettingsActions: function(paneAction) {
         var rawDataActions = "";
         if (yellow.system.editSettingsActions && yellow.system.editSettingsActions!="none") {
             var tokens = yellow.system.editSettingsActions.split(/\s*,\s*/);
             for (var i=0; i<tokens.length; i++) {
                 var token = tokens[i];
-                rawDataActions += "<a href=\"#\""+(token==paneAction ? "class=\"active\"": "")+" data-action=\"settings\" data-args=\""+yellow.toolbox.encodeHtml(token)+"\">"+this.getText(token+"Title")+"</a><br />";
+                rawDataActions += "<a href=\"#\""+(token==paneAction ? "class=\"active\"": "")+" data-action=\"settings\" data-arguments=\""+yellow.toolbox.encodeHtml(token)+"\">"+this.getText(token+"Title")+"</a><br />";
             }
         }
         return rawDataActions;
@@ -889,13 +940,13 @@ yellow.edit = {
     // Return raw data for languages
     getRawDataLanguages: function(paneId) {
         var rawDataLanguages = "";
-        if (yellow.system.serverLanguages && Object.keys(yellow.system.serverLanguages).length>1) {
-            for (var language in yellow.system.serverLanguages) {
+        if (yellow.system.coreLanguages && Object.keys(yellow.system.coreLanguages).length>1) {
+            for (var language in yellow.system.coreLanguages) {
                 var checked = language==this.getRequest("language") ? " checked=\"checked\"" : "";
-                rawDataLanguages += "<label for=\""+paneId+"-"+language+"\"><input type=\"radio\" name=\"language\" id=\""+paneId+"-"+language+"\" value=\""+language+"\""+checked+"> "+yellow.toolbox.encodeHtml(yellow.system.serverLanguages[language])+"</label><br />";
+                rawDataLanguages += "<label for=\""+paneId+"-"+language+"\"><input type=\"radio\" name=\"language\" id=\""+paneId+"-"+language+"\" value=\""+language+"\""+checked+"> "+yellow.toolbox.encodeHtml(yellow.system.coreLanguages[language])+"</label><br />";
             }
         }
-        return rawDataLanguages
+        return rawDataLanguages;
     },
     
     // Return raw data for buttons
@@ -918,14 +969,14 @@ yellow.edit = {
         return rawDataButtons;
     },
     
-    // Return request string
+    // Return request data
     getRequest: function(key, prefix) {
         if (!prefix) prefix = "request";
         key = prefix + yellow.toolbox.toUpperFirst(key);
         return (key in yellow.page) ? yellow.page[key] : "";
     },
     
-    // Return shortcut string
+    // Return shortcut setting
     getShortcut: function(key) {
         var shortcut = "";
         var tokens = yellow.system.editKeyboardShortcuts.split(/\s*,\s*/);
@@ -936,7 +987,7 @@ yellow.edit = {
                 break;
             }
         }
-        var labels = yellow.text.editKeyboardLabels.split(/\s*,\s*/);
+        var labels = yellow.language.editKeyboardLabels.split(/\s*,\s*/);
         if (navigator.platform.indexOf("Mac")==-1) {
             shortcut = shortcut.toUpperCase().replace("CTRL+", labels[0]).replace("ALT+", labels[1]).replace("SHIFT+", labels[2]);
         } else {
@@ -946,22 +997,23 @@ yellow.edit = {
         return shortcut;
     },
 
-    // Return text string
+    // Return text setting
     getText: function(key, prefix, postfix) {
         if (!prefix) prefix = "edit";
         if (!postfix) postfix = "";
         key = prefix + yellow.toolbox.toUpperFirst(key) + yellow.toolbox.toUpperFirst(postfix);
-        return (key in yellow.text) ? yellow.text[key] : "["+key+"]";
+        return (key in yellow.language) ? yellow.language[key] : "["+key+"]";
     },
 
-    // Return cookie string
-    getCookie: function(name) {
-        return yellow.toolbox.getCookie(name);
+    // Return browser cookie
+    getCookie: function(key) {
+        return yellow.toolbox.getCookie(key);
     },
     
-    // Check if user is administrator
-    isUserAdministrator: function() {
-        return yellow.system.userGroup=="administrator";
+    // Check if user with access
+    isUserAccess: function(action, location) {
+        var tokens = yellow.user.access.split(/\s*,\s*/);
+        return tokens.indexOf(action)!=-1 && (!location || location.substring(0, yellow.user.home.length)==yellow.user.home);
     },
 
     // Check if element is expandable
@@ -971,7 +1023,7 @@ yellow.edit = {
     
     // Check if extension exists
     isExtension: function(name) {
-        return name in yellow.system.serverExtensions;
+        return name in yellow.system.coreExtensions;
     }
 };
 
@@ -1147,9 +1199,15 @@ yellow.editor = {
     },
     
     // Set meta data
-    setMetaData: function(element, key, value, toggle) {
+    setMetaData: function(element, key, toggle) {
         var information = this.getMetaDataInformation(element, key);
         if (information.bottom!=0) {
+            var value = "";
+            if (key=="status") {
+                var tokens = yellow.system.editStatusValues.split(/\s*,\s*/);
+                var index = tokens.indexOf(information.value);
+                value = tokens[index+1<tokens.length ? index+1 : index];
+            }
             var selectionStart = information.found ? information.start : information.bottom;
             var selectionEnd = information.found ? information.end : information.bottom;
             var text = information.text;
@@ -1421,9 +1479,9 @@ yellow.toolbox = {
         return lines;
     },
     
-    // Return cookie string
-    getCookie: function(name) {
-        var matches = document.cookie.match("(^|; )"+name+"=([^;]+)");
+    // Return browser cookie
+    getCookie: function(key) {
+        var matches = document.cookie.match("(^|; )"+key+"=([^;]+)");
         return matches ? unescape(matches[2]) : "";
     },
     
@@ -1437,15 +1495,15 @@ yellow.toolbox = {
     },
     
     // Submit form with post method
-    submitForm: function(args) {
+    submitForm: function(arguments) {
         var elementForm = document.createElement("form");
         elementForm.setAttribute("method", "post");
-        for (var key in args) {
-            if (!args.hasOwnProperty(key)) continue;
+        for (var key in arguments) {
+            if (!arguments.hasOwnProperty(key)) continue;
             var elementInput = document.createElement("input");
             elementInput.setAttribute("type", "hidden");
             elementInput.setAttribute("name", key);
-            elementInput.setAttribute("value", args[key]);
+            elementInput.setAttribute("value", arguments[key]);
             elementForm.appendChild(elementInput);
         }
         document.body.appendChild(elementForm);
@@ -1453,4 +1511,5 @@ yellow.toolbox = {
     }
 };
 
-yellow.edit.intervalId = setInterval("yellow.onLoad()", 1);
+yellow.edit.intervalId = setInterval("yellow.onLoad(new Event('DOMContentLoading'))", 1);
+window.addEventListener("DOMContentLoaded", yellow.onLoad, false);

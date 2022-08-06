@@ -1,14 +1,16 @@
 <?php $this->yellow->layout("header") ?>
-<div class="content">
-<?php $this->yellow->layout("sidebar") ?>
+<div class="<?php echo "content".($this->yellow->page->isPage("sidebar") ? " with-sidebar" : "") ?>">
+<div class="sidebar" role="complementary">
+<?php echo $this->yellow->page->getPage("sidebar")->getContent() ?>
+</div>
 <div class="main" role="main">
 <?php $this->yellow->page->set("entryClass", "entry") ?>
 <?php if ($this->yellow->page->isExisting("tag")): ?>
-<?php foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("tag")) as $tag) { $this->yellow->page->set("entryClass", $this->yellow->page->get("entryClass")." tag-".$this->yellow->toolbox->normaliseArgs($tag, false)); } ?>
+<?php foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("tag")) as $tag) { $this->yellow->page->set("entryClass", $this->yellow->page->get("entryClass")." tag-".$this->yellow->toolbox->normaliseArguments($tag, false)); } ?>
 <?php endif ?>
 <div class="<?php echo $this->yellow->page->getHtml("entryClass") ?>">
 <div class="entry-title"><h1><?php echo $this->yellow->page->getHtml("titleContent") ?></h1></div>
-<div class="entry-meta"><p><?php echo $this->yellow->page->getDateHtml("published") ?> <?php echo $this->yellow->text->getHtml("blogBy") ?> <?php $authorCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("author")) as $author) { if (++$authorCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blog")->getLocation(true).$this->yellow->toolbox->normaliseArgs("author:$author")."\">".htmlspecialchars($author)."</a>"; } ?></p></div>
+<div class="entry-meta"><p><?php echo $this->yellow->page->getDateHtml("published") ?> <?php echo $this->yellow->language->getTextHtml("blogBy") ?> <?php $authorCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("author")) as $author) { if (++$authorCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blogStart")->getLocation(true).$this->yellow->toolbox->normaliseArguments("author:$author")."\">".htmlspecialchars($author)."</a>"; } ?></p></div>
 <div class="entry-content"><?php echo $this->yellow->page->getContent() ?></div>
 <div>
 <?php if ($tag != "meditation journal" ) : ?>
@@ -33,7 +35,7 @@
     <script defer
     src="https://cdn.commento.io/js/commento.js"
     data-no-fonts="true"
-    data-css-override="../commento.css">
+    data-css-override="../media/themes/paris-commento.css">
   </script>
   <div id="commento"></div>    
 </p>
@@ -44,7 +46,7 @@
 <?php echo $this->yellow->page->getExtra("links") ?>
 <?php if ($this->yellow->page->isExisting("tag")): ?>
 <div class="entry-tags">
-<p><?php echo $this->yellow->text->getHtml("blogTag") ?> <?php $tagCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("tag")) as $tag) { if (++$tagCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blog")->getLocation(true).$this->yellow->toolbox->normaliseArgs("tag:$tag")."\">".htmlspecialchars($tag)."</a>"; } ?></p>
+<p><?php echo $this->yellow->language->getTextHtml("blogTag") ?> <?php $tagCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("tag")) as $tag) { if (++$tagCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blogStart")->getLocation(true).$this->yellow->toolbox->normaliseArguments("tag:$tag")."\">".htmlspecialchars($tag)."</a>"; } ?></p>
 </div>
 <?php endif ?>
 <?php echo $this->yellow->page->getExtra("comments") ?>
@@ -52,4 +54,3 @@
 </div>
 </div>
 <?php $this->yellow->layout("footer") ?>
-</div>

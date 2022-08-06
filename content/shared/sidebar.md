@@ -1,5 +1,6 @@
 ---
 Title: Sidebar
+Status: shared
 ---
 Projects 
 

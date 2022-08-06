@@ -1,12 +1,9 @@
 <?php
-// English extension, https://github.com/datenstrom/yellow-extensions/tree/master/languages/english
-// Copyright (c) 2013-2019 Datenstrom, https://datenstrom.se
-// This file may be used and distributed under the terms of the public license.
+// English extension, https://github.com/datenstrom/yellow-extensions/tree/master/source/english
 
 class YellowEnglish {
-    const VERSION = "0.8.12";
-    const TYPE = "language";
-    public $yellow;         //access to API
+    const VERSION = "0.8.29";
+    public $yellow;         // access to API
     
     // Handle initialisation
     public function onLoad($yellow) {
@@ -15,11 +12,11 @@ class YellowEnglish {
     
     // Handle update
     public function onUpdate($action) {
-        $fileName = $this->yellow->system->get("settingDir").$this->yellow->system->get("systemFile");
+        $fileName = $this->yellow->system->get("coreExtensionDirectory").$this->yellow->system->get("coreSystemFile");
         if ($action=="install") {
             $this->yellow->system->save($fileName, array("language" => "en"));
         } elseif ($action=="uninstall" && $this->yellow->system->get("language")=="en") {
-            $language = reset(array_diff($this->yellow->text->getLanguages(), array("en")));
+            $language = reset(array_diff($this->yellow->system->getValues("language"), array("en")));
             $this->yellow->system->save($fileName, array("language" => $language));
         }
     }

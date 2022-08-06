@@ -1,6 +1,6 @@
 ---
 Title: Footer
-Status: hidden
+Status: shared
 ---
 Copyright & Copywrong by Sasha Kovaliov, 3000
 
