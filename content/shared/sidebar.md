@@ -14,7 +14,7 @@ Projects
 Connect
 
 * [LinkedIn](https://linkedin.com/in/sashakovaliov) 
-* [📆 Schedule a meeting](https://calendly.com/skovaliov/30min)
+* [📆 Schedule a meeting](https://tidycal.com/sasha/30-minutes-chat)
 
 Search
 [search]
