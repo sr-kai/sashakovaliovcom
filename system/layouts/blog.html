@@ -13,7 +13,7 @@
 <div class="entry-meta"><p><?php echo $this->yellow->page->getDateHtml("published") ?> <?php echo $this->yellow->language->getTextHtml("blogBy") ?> <?php $authorCounter = 0; foreach (preg_split("/\s*,\s*/", $this->yellow->page->get("author")) as $author) { if (++$authorCounter>1) echo ", "; echo "<a href=\"".$this->yellow->page->getPage("blogStart")->getLocation(true).$this->yellow->toolbox->normaliseArguments("author:$author")."\">".htmlspecialchars($author)."</a>"; } ?></p></div>
 <div class="entry-content"><?php echo $this->yellow->page->getContent() ?></div>
 <div>
-<?php if ($tag != "meditation journal" ) : ?>
+<?php if ($tag != "meditation journal" && $tag != "poetry") : ?>
 <div class="contact" style="background-color: #fff8d3; padding: 15px; border-radius: 5px;">
     <strong>Like this post? 📧 Subscribe to my newsletter</strong></br>
         Long-form content on meditation, happiness, and learning, delivered to your inbox bi-weekly.
@@ -42,6 +42,7 @@
 
 <?php endif; ?>
 </div>
+
 
 <?php echo $this->yellow->page->getExtra("links") ?>
 <?php if ($this->yellow->page->isExisting("tag")): ?>
